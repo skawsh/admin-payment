@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -137,7 +136,7 @@ const Dashboard: React.FC = () => {
             <Card className="shadow-sm hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <User className="mr-2 h-5 w-5 text-blue-500" />
+                  <Users className="mr-2 h-5 w-5 text-blue-500" />
                   Users
                 </CardTitle>
                 <CardDescription>
@@ -181,7 +180,7 @@ const Dashboard: React.FC = () => {
             <Card className="shadow-sm hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <BarChart4 className="mr-2 h-5 w-5 text-purple-500" />
+                  <BarChart2 className="mr-2 h-5 w-5 text-purple-500" />
                   Analytics
                 </CardTitle>
                 <CardDescription>
