@@ -31,7 +31,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
   { label: "Studios", icon: Building, path: "/studios" },
   { label: "Services", icon: Package, path: "/services" },
   { label: "Drivers", icon: Car, path: "/drivers" },
@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   };
 
   const isItemActive = (item: NavItem) => {
-    if (item.path === '/' && location.pathname === '/') return true;
+    if (item.path === '/dashboard' && (location.pathname === '/' || location.pathname === '/dashboard')) return true;
     if (item.path !== '/' && location.pathname.startsWith(item.path)) return true;
     if (item.children?.some(child => location.pathname.startsWith(child.path))) return true;
     return false;
