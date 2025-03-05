@@ -56,7 +56,7 @@ const StudioServices: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    navigate(`/studios/details/${studioId}`);
+    navigate('/studios');
   };
 
   const handleAddServiceSubmit = (serviceName: string, subservices: Omit<Subservice, "id">[]) => {
