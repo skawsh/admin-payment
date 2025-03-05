@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { formatIndianRupees } from '@/utils/dateUtils';
 
 // Extended Studio type with additional fields for the details page
 interface StudioDetail {
@@ -232,6 +233,18 @@ const StudioDetails: React.FC = () => {
     return <p className="text-base">N/A</p>;
   };
 
+  // Function to format date
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   if (isLoading) {
     return (
       <AdminLayout>
@@ -391,6 +404,11 @@ const StudioDetails: React.FC = () => {
                   ) : (
                     <p className="text-base">{studio.secondaryNumber || 'N/A'}</p>
                   )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Onboarded Date</label>
+                  <p className="text-base">{formatDate(studio.joinedDate)}</p>
                 </div>
               </div>
             </CardContent>
