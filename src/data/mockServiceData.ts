@@ -478,6 +478,41 @@ export const addItemToSubservice = (
   return item;
 };
 
+export const updateClothingItem = (
+  studioId: string,
+  serviceId: string,
+  subserviceId: string,
+  itemId: string,
+  updatedData: Partial<ClothingItem>
+): ClothingItem => {
+  const studio = getStudioById(studioId);
+  if (!studio) {
+    throw new Error("Studio not found");
+  }
+  
+  const service = studio.services.find(s => s.id === serviceId);
+  if (!service) {
+    throw new Error("Service not found");
+  }
+  
+  const subservice = service.subservices.find(s => s.id === subserviceId);
+  if (!subservice) {
+    throw new Error("Subservice not found");
+  }
+  
+  const itemIndex = subservice.items.findIndex(item => item.id === itemId);
+  if (itemIndex === -1) {
+    throw new Error("Clothing item not found");
+  }
+  
+  subservice.items[itemIndex] = {
+    ...subservice.items[itemIndex],
+    ...updatedData
+  };
+  
+  return subservice.items[itemIndex];
+};
+
 export const toggleServiceEnabled = (
   studioId: string,
   serviceId: string

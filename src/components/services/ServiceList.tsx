@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Service, Subservice, ClothingItem } from '@/types/serviceTypes';
-import { ChevronRight, Edit, Trash, ChevronDown, Plus, DollarSign, Package, Tag } from 'lucide-react';
+import { ChevronRight, Edit, Trash, ChevronDown, Plus, DollarSign, Package, Tag, Pencil, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
@@ -20,6 +20,7 @@ interface ServiceListProps {
   onAddSubservice?: (serviceId: string, subservice: Omit<Subservice, "id">) => void;
   onEditSubservice?: (serviceId: string, subserviceId: string, updatedSubservice: Partial<Subservice>) => void;
   onDeleteSubservice?: (serviceId: string, subserviceId: string) => void;
+  onEditItem?: (serviceId: string, subserviceId: string, itemId: string, updatedItem: Partial<ClothingItem>) => void;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({
@@ -30,7 +31,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
   onToggleSubservice,
   onAddSubservice,
   onEditSubservice,
-  onDeleteSubservice
+  onDeleteSubservice,
+  onEditItem
 }) => {
   const [filteredServices, setFilteredServices] = useState<Service[]>(services);
   const [expandedServices, setExpandedServices] = useState<Record<string, boolean>>({});
@@ -55,6 +57,13 @@ const ServiceList: React.FC<ServiceListProps> = ({
       [subserviceId]: !prev[subserviceId]
     }));
   };
+
+  // State for editing clothing items
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [standardPrice, setStandardPrice] = useState<number>(0);
+  const [expressPrice, setExpressPrice] = useState<number>(0);
+  const [currentEditingServiceId, setCurrentEditingServiceId] = useState<string>('');
+  const [currentEditingSubserviceId, setCurrentEditingSubserviceId] = useState<string>('');
 
   useEffect(() => {
     if (!searchTerm) {
@@ -105,6 +114,52 @@ const ServiceList: React.FC<ServiceListProps> = ({
       ...prev,
       [serviceId]: !prev[serviceId]
     }));
+  };
+  
+  // Start editing item prices
+  const startEditItem = (e: React.MouseEvent, serviceId: string, subserviceId: string, itemId: string, stdPrice: number, expPrice: number) => {
+    e.stopPropagation();
+    setEditingItemId(itemId);
+    setStandardPrice(stdPrice);
+    setExpressPrice(expPrice);
+    setCurrentEditingServiceId(serviceId);
+    setCurrentEditingSubserviceId(subserviceId);
+  };
+  
+  // Save edited item prices
+  const saveEditItem = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (standardPrice <= 0 || expressPrice <= 0) {
+      toast({
+        title: "Invalid prices",
+        description: "Prices must be greater than 0",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+    
+    if (onEditItem && editingItemId) {
+      onEditItem(
+        currentEditingServiceId,
+        currentEditingSubserviceId,
+        editingItemId,
+        {
+          standardPrice,
+          expressPrice
+        }
+      );
+      
+      // Reset editing state
+      setEditingItemId(null);
+    }
+  };
+  
+  // Cancel editing item prices
+  const cancelEditItem = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingItemId(null);
   };
 
   // Handlers for subservice operations
@@ -318,21 +373,88 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                 <Card key={item.id} className="overflow-hidden border-gray-200">
                                   <CardContent className="p-3">
                                     <div className="flex justify-between items-start">
-                                      <div>
+                                      <div className="flex-1">
                                         <h6 className="font-medium text-sm">{item.name}</h6>
                                         <div className="mt-2 space-y-1">
-                                          <div className="flex items-center text-xs text-gray-600">
-                                            <span className="bg-blue-100 text-blue-800 rounded-full px-2 py-0.5 mr-2">Standard</span>
-                                            ₹{item.standardPrice}
-                                          </div>
-                                          <div className="flex items-center text-xs text-gray-600">
-                                            <span className="bg-amber-100 text-amber-800 rounded-full px-2 py-0.5 mr-2">Express</span>
-                                            ₹{item.expressPrice}
-                                          </div>
+                                          {editingItemId === item.id ? (
+                                            <>
+                                              <div className="flex items-center text-xs space-x-2">
+                                                <span className="bg-blue-100 text-blue-800 rounded-full px-2 py-0.5">Standard</span>
+                                                <div className="w-20">
+                                                  <Input
+                                                    type="number"
+                                                    value={standardPrice}
+                                                    onChange={(e) => setStandardPrice(Number(e.target.value))}
+                                                    prefix="₹"
+                                                    min={1}
+                                                    size={4}
+                                                    className="h-6 text-xs"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                  />
+                                                </div>
+                                              </div>
+                                              <div className="flex items-center text-xs space-x-2">
+                                                <span className="bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">Express</span>
+                                                <div className="w-20">
+                                                  <Input
+                                                    type="number"
+                                                    value={expressPrice}
+                                                    onChange={(e) => setExpressPrice(Number(e.target.value))}
+                                                    prefix="₹"
+                                                    min={1}
+                                                    size={4}
+                                                    className="h-6 text-xs"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                  />
+                                                </div>
+                                              </div>
+                                              <div className="flex items-center space-x-1 mt-2">
+                                                <Button
+                                                  variant="ghost"
+                                                  size="xs"
+                                                  className="text-green-600 h-6"
+                                                  onClick={saveEditItem}
+                                                >
+                                                  <Check className="h-3 w-3 mr-1" /> Save
+                                                </Button>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="xs"
+                                                  className="text-red-600 h-6"
+                                                  onClick={cancelEditItem}
+                                                >
+                                                  <X className="h-3 w-3 mr-1" /> Cancel
+                                                </Button>
+                                              </div>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <div className="flex items-center text-xs text-gray-600">
+                                                <span className="bg-blue-100 text-blue-800 rounded-full px-2 py-0.5 mr-2">Standard</span>
+                                                ₹{item.standardPrice}
+                                              </div>
+                                              <div className="flex items-center text-xs text-gray-600">
+                                                <span className="bg-amber-100 text-amber-800 rounded-full px-2 py-0.5 mr-2">Express</span>
+                                                ₹{item.expressPrice}
+                                              </div>
+                                            </>
+                                          )}
                                         </div>
                                       </div>
-                                      <div className="bg-gray-100 p-2 rounded-full">
-                                        <Package className="h-5 w-5 text-gray-500" />
+                                      <div className="flex space-x-2">
+                                        {editingItemId !== item.id && (
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-blue-600"
+                                            onClick={(e) => startEditItem(e, service.id, subservice.id, item.id, item.standardPrice, item.expressPrice)}
+                                          >
+                                            <Pencil className="h-4 w-4" />
+                                          </Button>
+                                        )}
+                                        <div className="bg-gray-100 p-2 rounded-full">
+                                          <Package className="h-5 w-5 text-gray-500" />
+                                        </div>
                                       </div>
                                     </div>
                                   </CardContent>

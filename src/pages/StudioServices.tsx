@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus } from 'lucide-react';
@@ -9,7 +8,8 @@ import {
   addSubserviceToService, 
   addItemToSubservice,
   toggleServiceEnabled,
-  toggleSubserviceEnabled
+  toggleSubserviceEnabled,
+  updateClothingItem
 } from '@/data/mockServiceData';
 import ServiceList from '@/components/services/ServiceList';
 import SearchBox from '@/components/services/SearchBox';
@@ -116,6 +116,27 @@ const StudioServices: React.FC = () => {
     }
   };
 
+  const handleEditItem = (serviceId: string, subserviceId: string, itemId: string, updatedData: Partial<ClothingItem>) => {
+    try {
+      updateClothingItem(studioId || '', serviceId, subserviceId, itemId, updatedData);
+      
+      toast({
+        title: "Success",
+        description: "Item prices updated successfully",
+        duration: 3000,
+      });
+      
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update item prices",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
   const handleToggleService = (serviceId: string) => {
     try {
       toggleServiceEnabled(studioId || '', serviceId);
@@ -193,6 +214,7 @@ const StudioServices: React.FC = () => {
             onAddItem={handleAddItem}
             onToggleService={handleToggleService}
             onToggleSubservice={handleToggleSubservice}
+            onEditItem={handleEditItem}
           />
         </div>
       </div>
