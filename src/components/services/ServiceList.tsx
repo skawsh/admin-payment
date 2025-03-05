@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Service, Subservice } from '@/types/serviceTypes';
-import { ChevronRight, Edit, Trash } from 'lucide-react';
+import { ChevronRight, Edit, Trash, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
@@ -22,6 +22,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   onToggleSubservice
 }) => {
   const [filteredServices, setFilteredServices] = useState<Service[]>(services);
+  const [expandedServices, setExpandedServices] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -68,6 +69,13 @@ const ServiceList: React.FC<ServiceListProps> = ({
     });
   };
 
+  const toggleServiceExpand = (serviceId: string) => {
+    setExpandedServices(prev => ({
+      ...prev,
+      [serviceId]: !prev[serviceId]
+    }));
+  };
+
   if (filteredServices.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 text-center mt-4">
@@ -79,10 +87,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
   return (
     <div className="space-y-4 mt-4">
       {filteredServices.map(service => (
-        <div key={service.id} className="bg-white rounded-lg shadow-sm border border-gray.8 overflow-hidden">
+        <div key={service.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="flex items-center justify-between p-4">
-            <div className="flex items-center flex-1">
-              <ChevronRight className="h-5 w-5 text-gray-400 mr-3" />
+            <div 
+              className="flex items-center flex-1 cursor-pointer"
+              onClick={() => toggleServiceExpand(service.id)}
+            >
+              {expandedServices[service.id] ? 
+                <ChevronDown className="h-5 w-5 text-gray-400 mr-3" /> : 
+                <ChevronRight className="h-5 w-5 text-gray-400 mr-3" />
+              }
               <div>
                 <h3 className="font-medium">{service.name}</h3>
                 <p className="text-sm text-gray-500">
@@ -119,6 +133,39 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </div>
             </div>
           </div>
+          
+          {expandedServices[service.id] && (
+            <div className="border-t border-gray-100">
+              {service.subservices.length > 0 ? (
+                service.subservices.map((subservice) => (
+                  <div 
+                    key={subservice.id} 
+                    className="p-4 pl-12 border-b border-gray-100 last:border-b-0 flex justify-between items-center"
+                  >
+                    <div>
+                      <h4 className="font-medium text-gray-700">{subservice.name}</h4>
+                    </div>
+                    <div className="flex items-center space-x-6">
+                      <div className="flex items-center">
+                        <span className="mr-2 text-sm text-gray-600">
+                          {subservice.enabled ? "Enabled" : "Disabled"}
+                        </span>
+                        <Switch
+                          checked={subservice.enabled}
+                          onCheckedChange={() => onToggleSubservice(service.id, subservice.id)}
+                          className="data-[state=checked]:bg-emerald-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 pl-12 text-gray-500 text-sm">
+                  No subservices available
+                </div>
+              )}
+            </div>
+          )}
         </div>
       ))}
     </div>
