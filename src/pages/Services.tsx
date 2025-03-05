@@ -14,7 +14,9 @@ import {
   addServiceToStudio, 
   addSubserviceToService,
   toggleServiceEnabled,
-  toggleSubserviceEnabled
+  toggleSubserviceEnabled,
+  updateSubservice,
+  deleteSubservice
 } from '@/data/mockServiceData';
 
 const Services: React.FC = () => {
@@ -117,6 +119,57 @@ const Services: React.FC = () => {
     }
   };
 
+  const handleAddSubservice = (serviceId: string, newSubservice: Omit<Subservice, "id">) => {
+    try {
+      const dummyStudioId = "global";
+      addSubserviceToService(dummyStudioId, serviceId, newSubservice);
+      
+      setServices([...mockServices]);
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add subservice",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleEditSubservice = (serviceId: string, subserviceId: string, updatedSubservice: Partial<Subservice>) => {
+    try {
+      const dummyStudioId = "global";
+      updateSubservice(dummyStudioId, serviceId, subserviceId, updatedSubservice);
+      
+      setServices([...mockServices]);
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update subservice",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleDeleteSubservice = (serviceId: string, subserviceId: string) => {
+    try {
+      const dummyStudioId = "global";
+      deleteSubservice(dummyStudioId, serviceId, subserviceId);
+      
+      setServices([...mockServices]);
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete subservice",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-6">
@@ -144,6 +197,9 @@ const Services: React.FC = () => {
             onAddItem={handleAddItem}
             onToggleService={handleToggleService}
             onToggleSubservice={handleToggleSubservice}
+            onAddSubservice={handleAddSubservice}
+            onEditSubservice={handleEditSubservice}
+            onDeleteSubservice={handleDeleteSubservice}
           />
         </div>
       </div>

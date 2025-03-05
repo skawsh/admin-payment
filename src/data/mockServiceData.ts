@@ -519,3 +519,55 @@ export const toggleSubserviceEnabled = (
   subservice.enabled = !subservice.enabled;
   return subservice;
 };
+
+export const updateSubservice = (
+  studioId: string,
+  serviceId: string,
+  subserviceId: string,
+  updatedData: Partial<Subservice>
+): Subservice => {
+  const studio = getStudioById(studioId);
+  if (!studio) {
+    throw new Error("Studio not found");
+  }
+  
+  const service = studio.services.find(s => s.id === serviceId);
+  if (!service) {
+    throw new Error("Service not found");
+  }
+  
+  const subserviceIndex = service.subservices.findIndex(s => s.id === subserviceId);
+  if (subserviceIndex === -1) {
+    throw new Error("Subservice not found");
+  }
+  
+  service.subservices[subserviceIndex] = {
+    ...service.subservices[subserviceIndex],
+    ...updatedData
+  };
+  
+  return service.subservices[subserviceIndex];
+};
+
+export const deleteSubservice = (
+  studioId: string,
+  serviceId: string,
+  subserviceId: string
+): void => {
+  const studio = getStudioById(studioId);
+  if (!studio) {
+    throw new Error("Studio not found");
+  }
+  
+  const service = studio.services.find(s => s.id === serviceId);
+  if (!service) {
+    throw new Error("Service not found");
+  }
+  
+  const subserviceIndex = service.subservices.findIndex(s => s.id === subserviceId);
+  if (subserviceIndex === -1) {
+    throw new Error("Subservice not found");
+  }
+  
+  service.subservices.splice(subserviceIndex, 1);
+};
