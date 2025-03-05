@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ChevronLeft, Calendar, Clock, Clipboard, DollarSign, Star, ShoppingBag, Users, ChevronDown } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
@@ -341,7 +342,7 @@ const studioData: Record<string, StudioAnalytics> = {
       { ageGroup: "18-24", percentage: 20 },
       { ageGroup: "25-34", percentage: 40 },
       { ageGroup: "35-44", percentage: 25 },
-      { service: "45-54", percentage: 10 },
+      { ageGroup: "45-54", percentage: 10 },
       { ageGroup: "55+", percentage: 5 }
     ],
     peakHours: [
