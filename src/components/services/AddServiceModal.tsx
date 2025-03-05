@@ -28,12 +28,12 @@ const AddServiceModal: React.FC<AddServiceModalProps> = ({
 }) => {
   const [serviceName, setServiceName] = useState("");
   const [subservices, setSubservices] = useState<Array<Omit<Subservice, "id">>>(
-    [{ name: "", basePrice: 0, priceUnit: "per piece", items: [], enabled: true }]
+    [{ name: "", items: [], enabled: true }]
   );
   const { toast } = useToast();
 
   const handleAddSubservice = () => {
-    setSubservices([...subservices, { name: "", basePrice: 0, priceUnit: "per piece", items: [], enabled: true }]);
+    setSubservices([...subservices, { name: "", items: [], enabled: true }]);
   };
 
   const handleRemoveSubservice = (index: number) => {
@@ -50,7 +50,7 @@ const AddServiceModal: React.FC<AddServiceModalProps> = ({
     setSubservices(newSubservices);
   };
 
-  const handleSubserviceChange = (index: number, field: "name" | "basePrice" | "priceUnit", value: string | number) => {
+  const handleSubserviceChange = (index: number, field: "name", value: string) => {
     const newSubservices = [...subservices];
     newSubservices[index] = {
       ...newSubservices[index],
@@ -85,7 +85,7 @@ const AddServiceModal: React.FC<AddServiceModalProps> = ({
 
   const resetForm = () => {
     setServiceName("");
-    setSubservices([{ name: "", basePrice: 0, priceUnit: "per piece", items: [], enabled: true }]);
+    setSubservices([{ name: "", items: [], enabled: true }]);
     onClose();
   };
 
@@ -123,28 +123,6 @@ const AddServiceModal: React.FC<AddServiceModalProps> = ({
                       value={subservice.name}
                       onChange={(e) => handleSubserviceChange(index, "name", e.target.value)}
                     />
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label htmlFor={`subservice-price-${index}`}>Base Price</Label>
-                        <Input
-                          id={`subservice-price-${index}`}
-                          type="number"
-                          placeholder="Base Price"
-                          value={subservice.basePrice}
-                          onChange={(e) => handleSubserviceChange(index, "basePrice", parseFloat(e.target.value) || 0)}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor={`subservice-unit-${index}`}>Price Unit</Label>
-                        <Input
-                          id={`subservice-unit-${index}`}
-                          placeholder="e.g. per kg, per piece"
-                          value={subservice.priceUnit}
-                          onChange={(e) => handleSubserviceChange(index, "priceUnit", e.target.value)}
-                        />
-                      </div>
-                    </div>
                   </div>
                   
                   <Button

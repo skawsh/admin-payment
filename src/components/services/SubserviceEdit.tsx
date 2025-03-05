@@ -20,18 +20,11 @@ const SubserviceEdit: React.FC<SubserviceEditProps> = ({
 }) => {
   const [formData, setFormData] = React.useState<Partial<Subservice>>({
     name: subservice?.name || '',
-    basePrice: subservice?.basePrice || 0,
-    priceUnit: subservice?.priceUnit || 'per Kg',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
-    if (name === 'basePrice') {
-      setFormData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
@@ -55,29 +48,6 @@ const SubserviceEdit: React.FC<SubserviceEditProps> = ({
             value={formData.name}
             onChange={handleChange}
             placeholder="e.g. Wash & Fold"
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="basePrice">Base Price</Label>
-          <Input
-            id="basePrice"
-            name="basePrice"
-            type="number"
-            value={formData.basePrice}
-            onChange={handleChange}
-            placeholder="0"
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="priceUnit">Price Unit</Label>
-          <Input
-            id="priceUnit"
-            name="priceUnit"
-            value={formData.priceUnit}
-            onChange={handleChange}
-            placeholder="e.g. per Kg, per piece"
           />
         </div>
       </div>
