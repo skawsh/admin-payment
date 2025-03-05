@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronLeft, Calendar, Clock, Clipboard, DollarSign, Star, ShoppingBag, Users, ChevronDown } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
@@ -51,7 +50,7 @@ interface StudioAnalytics {
   }[];
 }
 
-// Sample data
+// Sample data - now using string keys to match the router param format
 const studioData: Record<string, StudioAnalytics> = {
   "1": {
     id: 1,
@@ -154,6 +153,312 @@ const studioData: Record<string, StudioAnalytics> = {
       { customerName: "Karthik R.", rating: 4, comment: "Good service overall, just wish they had longer hours.", date: "1 week ago" },
       { customerName: "Divya N.", rating: 5, comment: "Fantastic service! My clothes look brand new.", date: "2 weeks ago" }
     ]
+  },
+  "3": {
+    id: 3,
+    name: "Fresh Fold Services",
+    totalOrders: 216,
+    totalRevenue: 85600,
+    avgTurnaroundTime: "2.0 hrs",
+    rating: 4.2,
+    customerSatisfaction: 87,
+    cancellationRate: 4.5,
+    activeCustomers: 98,
+    monthlyStats: [
+      { month: "Jan", orders: 32, revenue: 12800 },
+      { month: "Feb", orders: 35, revenue: 13800 },
+      { month: "Mar", orders: 38, revenue: 14900 },
+      { month: "Apr", orders: 36, revenue: 14200 },
+      { month: "May", orders: 40, revenue: 15700 },
+      { month: "Jun", orders: 35, revenue: 14200 }
+    ],
+    popularServices: [
+      { service: "Wash & Fold", percentage: 42 },
+      { service: "Dry Cleaning", percentage: 25 },
+      { service: "Ironing", percentage: 24 },
+      { service: "Others", percentage: 9 }
+    ],
+    servicePerformance: [
+      { service: "Wash & Fold", revenue: 35952, growth: 6, orders: 91 },
+      { service: "Dry Cleaning", revenue: 21400, growth: -2, orders: 54 },
+      { service: "Ironing", revenue: 20544, growth: 8, orders: 52 },
+      { service: "Premium Cleaning", revenue: 7704, growth: 14, orders: 19 }
+    ],
+    customerDemographics: [
+      { ageGroup: "18-24", percentage: 20 },
+      { ageGroup: "25-34", percentage: 35 },
+      { ageGroup: "35-44", percentage: 25 },
+      { ageGroup: "45-54", percentage: 12 },
+      { ageGroup: "55+", percentage: 8 }
+    ],
+    peakHours: [
+      { time: "8 AM - 10 AM", orders: 38 },
+      { time: "10 AM - 12 PM", orders: 45 },
+      { time: "12 PM - 2 PM", orders: 58 },
+      { time: "2 PM - 4 PM", orders: 42 },
+      { time: "4 PM - 6 PM", orders: 33 }
+    ],
+    recentReviews: [
+      { customerName: "Sanjay T.", rating: 4, comment: "Good service but could be faster", date: "3 days ago" },
+      { customerName: "Priti L.", rating: 5, comment: "Excellent cleaning quality", date: "1 week ago" },
+      { customerName: "Rahul G.", rating: 3, comment: "Average service, delivery was late", date: "1 week ago" },
+      { customerName: "Neha S.", rating: 5, comment: "Very professional staff", date: "2 weeks ago" }
+    ]
+  },
+  "4": {
+    id: 4,
+    name: "Royal Wash",
+    totalOrders: 298,
+    totalRevenue: 118200,
+    avgTurnaroundTime: "2.7 hrs",
+    rating: 4.8,
+    customerSatisfaction: 96,
+    cancellationRate: 1.8,
+    activeCustomers: 156,
+    monthlyStats: [
+      { month: "Jan", orders: 46, revenue: 18200 },
+      { month: "Feb", orders: 48, revenue: 19100 },
+      { month: "Mar", orders: 52, revenue: 20600 },
+      { month: "Apr", orders: 49, revenue: 19400 },
+      { month: "May", orders: 54, revenue: 21300 },
+      { month: "Jun", orders: 49, revenue: 19600 }
+    ],
+    popularServices: [
+      { service: "Wash & Fold", percentage: 40 },
+      { service: "Dry Cleaning", percentage: 35 },
+      { service: "Ironing", percentage: 15 },
+      { service: "Others", percentage: 10 }
+    ],
+    servicePerformance: [
+      { service: "Wash & Fold", revenue: 47280, growth: 15, orders: 119 },
+      { service: "Dry Cleaning", revenue: 41370, growth: 12, orders: 104 },
+      { service: "Ironing", revenue: 17730, growth: 4, orders: 45 },
+      { service: "Premium Cleaning", revenue: 11820, growth: 25, orders: 30 }
+    ],
+    customerDemographics: [
+      { ageGroup: "18-24", percentage: 10 },
+      { ageGroup: "25-34", percentage: 45 },
+      { ageGroup: "35-44", percentage: 30 },
+      { ageGroup: "45-54", percentage: 10 },
+      { ageGroup: "55+", percentage: 5 }
+    ],
+    peakHours: [
+      { time: "8 AM - 10 AM", orders: 45 },
+      { time: "10 AM - 12 PM", orders: 62 },
+      { time: "12 PM - 2 PM", orders: 75 },
+      { time: "2 PM - 4 PM", orders: 66 },
+      { time: "4 PM - 6 PM", orders: 50 }
+    ],
+    recentReviews: [
+      { customerName: "Vivek M.", rating: 5, comment: "Premium service! Worth every penny", date: "1 day ago" },
+      { customerName: "Smita R.", rating: 5, comment: "The best laundry service in town", date: "4 days ago" },
+      { customerName: "Akash P.", rating: 4, comment: "Great service, professional staff", date: "1 week ago" },
+      { customerName: "Tanvi S.", rating: 5, comment: "My clothes look brand new", date: "2 weeks ago" }
+    ]
+  },
+  "5": {
+    id: 5,
+    name: "Urban Laundromat",
+    totalOrders: 176,
+    totalRevenue: 68900,
+    avgTurnaroundTime: "3.0 hrs",
+    rating: 3.9,
+    customerSatisfaction: 82,
+    cancellationRate: 5.2,
+    activeCustomers: 85,
+    monthlyStats: [
+      { month: "Jan", orders: 25, revenue: 9800 },
+      { month: "Feb", orders: 28, revenue: 10900 },
+      { month: "Mar", orders: 30, revenue: 11700 },
+      { month: "Apr", orders: 31, revenue: 12100 },
+      { month: "May", orders: 33, revenue: 12900 },
+      { month: "Jun", orders: 29, revenue: 11500 }
+    ],
+    popularServices: [
+      { service: "Wash & Fold", percentage: 50 },
+      { service: "Dry Cleaning", percentage: 20 },
+      { service: "Ironing", percentage: 20 },
+      { service: "Others", percentage: 10 }
+    ],
+    servicePerformance: [
+      { service: "Wash & Fold", revenue: 34450, growth: 3, orders: 88 },
+      { service: "Dry Cleaning", revenue: 13780, growth: -5, orders: 35 },
+      { service: "Ironing", revenue: 13780, growth: 0, orders: 35 },
+      { service: "Premium Cleaning", revenue: 6890, growth: 10, orders: 18 }
+    ],
+    customerDemographics: [
+      { ageGroup: "18-24", percentage: 25 },
+      { ageGroup: "25-34", percentage: 30 },
+      { ageGroup: "35-44", percentage: 20 },
+      { ageGroup: "45-54", percentage: 15 },
+      { ageGroup: "55+", percentage: 10 }
+    ],
+    peakHours: [
+      { time: "8 AM - 10 AM", orders: 30 },
+      { time: "10 AM - 12 PM", orders: 35 },
+      { time: "12 PM - 2 PM", orders: 42 },
+      { time: "2 PM - 4 PM", orders: 40 },
+      { time: "4 PM - 6 PM", orders: 29 }
+    ],
+    recentReviews: [
+      { customerName: "Deepak J.", rating: 3, comment: "Service is okay, nothing special", date: "2 days ago" },
+      { customerName: "Kavita N.", rating: 4, comment: "Clean clothes but takes time", date: "5 days ago" },
+      { customerName: "Mohan K.", rating: 4, comment: "Good service for regular clothes", date: "1 week ago" },
+      { customerName: "Leela P.", rating: 3, comment: "Average service but convenient location", date: "2 weeks ago" }
+    ]
+  },
+  "6": {
+    id: 6,
+    name: "Quick & Clean",
+    totalOrders: 210,
+    totalRevenue: 89300,
+    avgTurnaroundTime: "2.0 hrs",
+    rating: 4.3,
+    customerSatisfaction: 89,
+    cancellationRate: 3.5,
+    activeCustomers: 125,
+    monthlyStats: [
+      { month: "Jan", orders: 32, revenue: 13600 },
+      { month: "Feb", orders: 35, revenue: 14900 },
+      { month: "Mar", orders: 38, revenue: 16200 },
+      { month: "Apr", orders: 34, revenue: 14500 },
+      { month: "May", orders: 37, revenue: 15700 },
+      { month: "Jun", orders: 34, revenue: 14400 }
+    ],
+    popularServices: [
+      { service: "Wash & Fold", percentage: 45 },
+      { service: "Dry Cleaning", percentage: 25 },
+      { service: "Ironing", percentage: 20 },
+      { service: "Others", percentage: 10 }
+    ],
+    servicePerformance: [
+      { service: "Wash & Fold", revenue: 40185, growth: 8, orders: 95 },
+      { service: "Dry Cleaning", revenue: 22325, growth: 5, orders: 52 },
+      { service: "Ironing", revenue: 17860, growth: 10, orders: 42 },
+      { service: "Premium Cleaning", revenue: 8930, growth: 18, orders: 21 }
+    ],
+    customerDemographics: [
+      { ageGroup: "18-24", percentage: 20 },
+      { ageGroup: "25-34", percentage: 40 },
+      { ageGroup: "35-44", percentage: 25 },
+      { service: "45-54", percentage: 10 },
+      { ageGroup: "55+", percentage: 5 }
+    ],
+    peakHours: [
+      { time: "8 AM - 10 AM", orders: 35 },
+      { time: "10 AM - 12 PM", orders: 45 },
+      { time: "12 PM - 2 PM", orders: 55 },
+      { time: "2 PM - 4 PM", orders: 48 },
+      { time: "4 PM - 6 PM", orders: 27 }
+    ],
+    recentReviews: [
+      { customerName: "Raman S.", rating: 4, comment: "Fast service as promised", date: "2 days ago" },
+      { customerName: "Anita G.", rating: 5, comment: "Very efficient and professional", date: "6 days ago" },
+      { customerName: "Karan M.", rating: 4, comment: "Good quality cleaning", date: "1 week ago" },
+      { customerName: "Preeti D.", rating: 4, comment: "Reliable and consistent service", date: "2 weeks ago" }
+    ]
+  },
+  "7": {
+    id: 7,
+    name: "Wash Masters",
+    totalOrders: 265,
+    totalRevenue: 103200,
+    avgTurnaroundTime: "2.3 hrs",
+    rating: 4.6,
+    customerSatisfaction: 94,
+    cancellationRate: 2.2,
+    activeCustomers: 140,
+    monthlyStats: [
+      { month: "Jan", orders: 40, revenue: 15600 },
+      { month: "Feb", orders: 43, revenue: 16800 },
+      { month: "Mar", orders: 47, revenue: 18300 },
+      { month: "Apr", orders: 44, revenue: 17200 },
+      { month: "May", orders: 48, revenue: 18700 },
+      { month: "Jun", orders: 43, revenue: 16600 }
+    ],
+    popularServices: [
+      { service: "Wash & Fold", percentage: 35 },
+      { service: "Dry Cleaning", percentage: 40 },
+      { service: "Ironing", percentage: 15 },
+      { service: "Others", percentage: 10 }
+    ],
+    servicePerformance: [
+      { service: "Wash & Fold", revenue: 36120, growth: 12, orders: 93 },
+      { service: "Dry Cleaning", revenue: 41280, growth: 15, orders: 106 },
+      { service: "Ironing", revenue: 15480, growth: 5, orders: 40 },
+      { service: "Premium Cleaning", revenue: 10320, growth: 20, orders: 26 }
+    ],
+    customerDemographics: [
+      { ageGroup: "18-24", percentage: 15 },
+      { ageGroup: "25-34", percentage: 40 },
+      { ageGroup: "35-44", percentage: 30 },
+      { ageGroup: "45-54", percentage: 10 },
+      { ageGroup: "55+", percentage: 5 }
+    ],
+    peakHours: [
+      { time: "8 AM - 10 AM", orders: 40 },
+      { time: "10 AM - 12 PM", orders: 55 },
+      { time: "12 PM - 2 PM", orders: 65 },
+      { time: "2 PM - 4 PM", orders: 60 },
+      { time: "4 PM - 6 PM", orders: 45 }
+    ],
+    recentReviews: [
+      { customerName: "Anil T.", rating: 5, comment: "Top notch service, very professional", date: "3 days ago" },
+      { customerName: "Shweta K.", rating: 4, comment: "Great service, minor delay in delivery", date: "5 days ago" },
+      { customerName: "Pramod R.", rating: 5, comment: "Excellent cleaning quality", date: "1 week ago" },
+      { customerName: "Sunita P.", rating: 5, comment: "Very satisfied with the service", date: "2 weeks ago" }
+    ]
+  },
+  "8": {
+    id: 8,
+    name: "Pristine Garments",
+    totalOrders: 154,
+    totalRevenue: 61800,
+    avgTurnaroundTime: "3.5 hrs",
+    rating: 4.0,
+    customerSatisfaction: 84,
+    cancellationRate: 4.8,
+    activeCustomers: 75,
+    monthlyStats: [
+      { month: "Jan", orders: 22, revenue: 8800 },
+      { month: "Feb", orders: 24, revenue: 9600 },
+      { month: "Mar", orders: 26, revenue: 10400 },
+      { month: "Apr", orders: 28, revenue: 11200 },
+      { month: "May", orders: 30, revenue: 12000 },
+      { month: "Jun", orders: 24, revenue: 9800 }
+    ],
+    popularServices: [
+      { service: "Wash & Fold", percentage: 30 },
+      { service: "Dry Cleaning", percentage: 45 },
+      { service: "Ironing", percentage: 15 },
+      { service: "Others", percentage: 10 }
+    ],
+    servicePerformance: [
+      { service: "Wash & Fold", revenue: 18540, growth: 2, orders: 46 },
+      { service: "Dry Cleaning", revenue: 27810, growth: 8, orders: 69 },
+      { service: "Ironing", revenue: 9270, growth: -2, orders: 23 },
+      { service: "Premium Cleaning", revenue: 6180, growth: 12, orders: 16 }
+    ],
+    customerDemographics: [
+      { ageGroup: "18-24", percentage: 10 },
+      { ageGroup: "25-34", percentage: 30 },
+      { ageGroup: "35-44", percentage: 35 },
+      { ageGroup: "45-54", percentage: 15 },
+      { ageGroup: "55+", percentage: 10 }
+    ],
+    peakHours: [
+      { time: "8 AM - 10 AM", orders: 25 },
+      { time: "10 AM - 12 PM", orders: 30 },
+      { time: "12 PM - 2 PM", orders: 40 },
+      { time: "2 PM - 4 PM", orders: 35 },
+      { time: "4 PM - 6 PM", orders: 24 }
+    ],
+    recentReviews: [
+      { customerName: "Girish M.", rating: 4, comment: "Good for premium clothes", date: "4 days ago" },
+      { customerName: "Renuka S.", rating: 3, comment: "Decent service but takes too long", date: "1 week ago" },
+      { customerName: "Jai P.", rating: 5, comment: "Excellent dry cleaning service", date: "10 days ago" },
+      { customerName: "Maya L.", rating: 4, comment: "Good quality cleaning", date: "2 weeks ago" }
+    ]
   }
 };
 
@@ -162,9 +467,8 @@ const StudioAnalytics: React.FC = () => {
   const [timeRange, setTimeRange] = useState<string>("30days");
   const { toast } = useToast();
   
-  // If no studioId is provided in URL params, use the first studio as default
-  const defaultStudioId = studioId || "1";
-  const studio = studioData[defaultStudioId];
+  // Make sure to find the studio using the studioId parameter
+  const studio = studioId ? studioData[studioId] : undefined;
   
   if (!studio) {
     return (
