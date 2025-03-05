@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { mockServices } from '@/data/mockServiceData';
 import ServiceList from '@/components/services/ServiceList';
