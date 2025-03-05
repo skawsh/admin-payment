@@ -81,11 +81,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       <div className={`flex items-center justify-center h-16 border-b ${isOpen ? "px-4" : "px-0"}`}>
         {isOpen ? (
           <div className="flex items-center space-x-2">
-            <span className="font-bold text-lg text-admin-primary">Laundry Link</span>
+            <span className="font-bold text-lg text-admin-primary">Skawsh Admin</span>
           </div>
         ) : (
           <div className="flex justify-center items-center">
-            <span className="font-bold text-xl text-admin-primary">LL</span>
+            <span className="font-bold text-xl text-admin-primary">SA</span>
           </div>
         )}
       </div>
