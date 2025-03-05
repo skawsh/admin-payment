@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { Service, Subservice } from '@/types/serviceTypes';
-import { ChevronRight, Edit, Trash, ChevronDown, Plus } from 'lucide-react';
+import { Service, Subservice, ClothingItem } from '@/types/serviceTypes';
+import { ChevronRight, Edit, Trash, ChevronDown, Plus, DollarSign, Package, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
@@ -9,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { useLocation } from 'react-router-dom';
 
 interface ServiceListProps {
   services: Service[];
@@ -42,6 +43,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const [currentServiceId, setCurrentServiceId] = useState<string>('');
   const [currentSubserviceId, setCurrentSubserviceId] = useState<string>('');
   const [subserviceName, setSubserviceName] = useState('');
+  
+  const location = useLocation();
+  const isStudioServicesPage = location.pathname.includes('/studios/services/');
+  
+  const [expandedSubservices, setExpandedSubservices] = useState<Record<string, boolean>>({});
+  
+  const toggleSubserviceExpand = (subserviceId: string) => {
+    setExpandedSubservices(prev => ({
+      ...prev,
+      [subserviceId]: !prev[subserviceId]
+    }));
+  };
 
   useEffect(() => {
     if (!searchTerm) {
@@ -239,41 +252,107 @@ const ServiceList: React.FC<ServiceListProps> = ({
               {service.subservices.length > 0 ? (
                 <>
                   {service.subservices.map((subservice) => (
-                    <div 
-                      key={subservice.id} 
-                      className="p-4 pl-12 border-b border-gray-100 last:border-b-0 flex justify-between items-center bg-gradient-to-r from-admin-success/10 to-admin-success/5"
-                    >
-                      <div>
-                        <h4 className="font-medium text-admin-dark">{subservice.name}</h4>
-                      </div>
-                      <div className="flex items-center space-x-6">
+                    <div key={subservice.id} className="border-b border-gray-100 last:border-b-0">
+                      <div 
+                        className="p-4 pl-12 flex justify-between items-center bg-gradient-to-r from-admin-success/10 to-admin-success/5 cursor-pointer"
+                        onClick={() => isStudioServicesPage && toggleSubserviceExpand(subservice.id)}
+                      >
                         <div className="flex items-center">
-                          <span className="mr-2 text-sm text-gray-600">
-                            {subservice.enabled ? "Enabled" : "Disabled"}
-                          </span>
-                          <Switch
-                            checked={subservice.enabled}
-                            onCheckedChange={() => onToggleSubservice(service.id, subservice.id)}
-                            className="data-[state=checked]:bg-emerald-500"
-                          />
+                          {isStudioServicesPage && (
+                            <>
+                              {expandedSubservices[subservice.id] ? 
+                                <ChevronDown className="h-4 w-4 text-admin-success mr-3" /> : 
+                                <ChevronRight className="h-4 w-4 text-admin-success mr-3" />
+                              }
+                            </>
+                          )}
+                          <div>
+                            <h4 className="font-medium text-admin-dark">{subservice.name}</h4>
+                            {isStudioServicesPage && subservice.basePrice && (
+                              <div className="flex items-center text-sm text-gray-500 mt-1">
+                                <DollarSign className="h-3 w-3 mr-1" />
+                                <span>Base: {subservice.basePrice} {subservice.priceUnit}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-3">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => openEditSubserviceDialog(e, service.id, subservice.id, subservice.name)}
-                          >
-                            <Edit className="h-5 w-5 text-admin-success" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={(e) => openDeleteSubserviceDialog(e, service.id, subservice.id)}
-                          >
-                            <Trash className="h-5 w-5 text-admin-success" />
-                          </Button>
+                        <div className="flex items-center space-x-6">
+                          <div className="flex items-center">
+                            <span className="mr-2 text-sm text-gray-600">
+                              {subservice.enabled ? "Enabled" : "Disabled"}
+                            </span>
+                            <Switch
+                              checked={subservice.enabled}
+                              onCheckedChange={() => onToggleSubservice(service.id, subservice.id)}
+                              className="data-[state=checked]:bg-emerald-500"
+                            />
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={(e) => openEditSubserviceDialog(e, service.id, subservice.id, subservice.name)}
+                            >
+                              <Edit className="h-5 w-5 text-admin-success" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={(e) => openDeleteSubserviceDialog(e, service.id, subservice.id)}
+                            >
+                              <Trash className="h-5 w-5 text-admin-success" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
+                      
+                      {isStudioServicesPage && expandedSubservices[subservice.id] && (
+                        <div className="bg-gray-50 pl-20 pr-4 py-4">
+                          <h5 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                            <Tag className="h-4 w-4 mr-1" /> Clothing Items
+                          </h5>
+                          
+                          {subservice.items.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              {subservice.items.map(item => (
+                                <Card key={item.id} className="overflow-hidden border-gray-200">
+                                  <CardContent className="p-3">
+                                    <div className="flex justify-between items-start">
+                                      <div>
+                                        <h6 className="font-medium text-sm">{item.name}</h6>
+                                        <div className="mt-2 space-y-1">
+                                          <div className="flex items-center text-xs text-gray-600">
+                                            <span className="bg-blue-100 text-blue-800 rounded-full px-2 py-0.5 mr-2">Standard</span>
+                                            ₹{item.standardPrice}
+                                          </div>
+                                          <div className="flex items-center text-xs text-gray-600">
+                                            <span className="bg-amber-100 text-amber-800 rounded-full px-2 py-0.5 mr-2">Express</span>
+                                            ₹{item.expressPrice}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="bg-gray-100 p-2 rounded-full">
+                                        <Package className="h-5 w-5 text-gray-500" />
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-500">No clothing items available</p>
+                          )}
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-4 text-admin-success hover:text-admin-success hover:bg-admin-success/10 border-admin-success/20"
+                            onClick={() => onAddItem(service.id, subservice.id, {})}
+                          >
+                            <Plus className="h-3 w-3 mr-1" /> Add Item
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   ))}
                   <div className="p-3 pl-12 border-t border-gray-100 bg-white">

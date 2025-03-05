@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import PageHeader from '@/components/ui/PageHeader';
 import { ClothingItem, Service, Subservice } from '@/types/serviceTypes';
+import AddItemModal from '@/components/services/AddItemModal';
 
 const StudioServices: React.FC = () => {
   const { studioId } = useParams<{ studioId: string }>();
@@ -26,6 +27,9 @@ const StudioServices: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [addServiceModalOpen, setAddServiceModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [addItemModalOpen, setAddItemModalOpen] = useState(false);
+  const [currentServiceId, setCurrentServiceId] = useState('');
+  const [currentSubserviceId, setCurrentSubserviceId] = useState('');
 
   const studio = getStudioById(studioId || '');
 
@@ -85,8 +89,14 @@ const StudioServices: React.FC = () => {
   };
 
   const handleAddItem = (serviceId: string, subserviceId: string, newItem: Omit<ClothingItem, "id">) => {
+    setCurrentServiceId(serviceId);
+    setCurrentSubserviceId(subserviceId);
+    setAddItemModalOpen(true);
+  };
+
+  const handleAddItemSubmit = (newItem: Omit<ClothingItem, "id">) => {
     try {
-      addItemToSubservice(studioId || '', serviceId, subserviceId, newItem);
+      addItemToSubservice(studioId || '', currentServiceId, currentSubserviceId, newItem);
       
       toast({
         title: "Success",
@@ -94,6 +104,7 @@ const StudioServices: React.FC = () => {
         duration: 3000,
       });
       
+      setAddItemModalOpen(false);
       setRefreshKey(prev => prev + 1);
     } catch (error) {
       toast({
@@ -190,6 +201,12 @@ const StudioServices: React.FC = () => {
         isOpen={addServiceModalOpen}
         onClose={() => setAddServiceModalOpen(false)}
         onAddService={handleAddServiceSubmit}
+      />
+
+      <AddItemModal
+        isOpen={addItemModalOpen}
+        onClose={() => setAddItemModalOpen(false)}
+        onAddItem={handleAddItemSubmit}
       />
     </AdminLayout>
   );
