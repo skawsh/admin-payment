@@ -187,18 +187,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
   return (
     <div className="space-y-4 mt-4">
       {filteredServices.map(service => (
-        <div key={service.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div key={service.id} className="bg-gradient-to-r from-admin-primary/10 to-admin-primary/5 rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="flex items-center justify-between p-4">
             <div 
               className="flex items-center flex-1 cursor-pointer"
               onClick={() => toggleServiceExpand(service.id)}
             >
               {expandedServices[service.id] ? 
-                <ChevronDown className="h-5 w-5 text-gray-400 mr-3" /> : 
-                <ChevronRight className="h-5 w-5 text-gray-400 mr-3" />
+                <ChevronDown className="h-5 w-5 text-admin-primary mr-3" /> : 
+                <ChevronRight className="h-5 w-5 text-admin-primary mr-3" />
               }
               <div>
-                <h3 className="font-medium">{service.name}</h3>
+                <h3 className="font-medium text-admin-dark">{service.name}</h3>
                 <p className="text-sm text-gray-500">
                   {service.subservices.length} subservices
                 </p>
@@ -241,10 +241,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   {service.subservices.map((subservice) => (
                     <div 
                       key={subservice.id} 
-                      className="p-4 pl-12 border-b border-gray-100 last:border-b-0 flex justify-between items-center"
+                      className="p-4 pl-12 border-b border-gray-100 last:border-b-0 flex justify-between items-center bg-gradient-to-r from-admin-success/10 to-admin-success/5"
                     >
                       <div>
-                        <h4 className="font-medium text-gray-700">{subservice.name}</h4>
+                        <h4 className="font-medium text-admin-dark">{subservice.name}</h4>
                       </div>
                       <div className="flex items-center space-x-6">
                         <div className="flex items-center">
@@ -263,23 +263,23 @@ const ServiceList: React.FC<ServiceListProps> = ({
                             size="icon" 
                             onClick={(e) => openEditSubserviceDialog(e, service.id, subservice.id, subservice.name)}
                           >
-                            <Edit className="h-5 w-5 text-gray-500" />
+                            <Edit className="h-5 w-5 text-admin-success" />
                           </Button>
                           <Button 
                             variant="ghost" 
                             size="icon" 
                             onClick={(e) => openDeleteSubserviceDialog(e, service.id, subservice.id)}
                           >
-                            <Trash className="h-5 w-5 text-gray-500" />
+                            <Trash className="h-5 w-5 text-admin-success" />
                           </Button>
                         </div>
                       </div>
                     </div>
                   ))}
-                  <div className="p-3 pl-12 border-t border-gray-100">
+                  <div className="p-3 pl-12 border-t border-gray-100 bg-white">
                     <Button 
                       variant="ghost" 
-                      className="text-sm text-gray-600 hover:text-gray-900 flex items-center"
+                      className="text-sm text-admin-success hover:text-admin-success/80 flex items-center"
                       onClick={() => openAddSubserviceDialog(service.id)}
                     >
                       <Plus className="h-4 w-4 mr-1" /> Add Subservice
@@ -287,11 +287,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   </div>
                 </>
               ) : (
-                <div className="p-4 pl-12 flex flex-col items-start">
+                <div className="p-4 pl-12 flex flex-col items-start bg-white">
                   <p className="text-gray-500 text-sm mb-3">No subservices available</p>
                   <Button 
                     variant="ghost" 
-                    className="text-sm text-gray-600 hover:text-gray-900 flex items-center"
+                    className="text-sm text-admin-success hover:text-admin-success/80 flex items-center"
                     onClick={() => openAddSubserviceDialog(service.id)}
                   >
                     <Plus className="h-4 w-4 mr-1" /> Add Subservice
