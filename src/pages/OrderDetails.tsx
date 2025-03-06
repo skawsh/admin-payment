@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Info, Truck, User, DollarSign } from "lucide-react";
 import { formatIndianRupees } from '@/utils/dateUtils';
-import { initialUnpaidOrders } from '@/data/mockPaymentData';
-import { UnpaidOrder } from '@/types/paymentTypes';
+import { initialUnpaidOrders, initialPaymentHistory } from '@/data/mockPaymentData';
+import { UnpaidOrder, PaymentRecord } from '@/types/paymentTypes';
 
-// Import sample data for OrderDetails
 const clothingItemsByOrderId: Record<string, {
   standard: {name: string, quantity: number}[],
   express: {name: string, quantity: number}[]
@@ -75,7 +74,6 @@ const clothingItemsByOrderId: Record<string, {
   },
 };
 
-// Sample delivery information for each order
 const deliveryInfoByOrderId: Record<string, {assignedTo: string, vehicleDetails: string, phoneNumber: string, deliveryTime: string}> = {
   'ORD-1001': {
     assignedTo: 'Deepak Bagade',
@@ -115,7 +113,6 @@ const deliveryInfoByOrderId: Record<string, {assignedTo: string, vehicleDetails:
   },
 };
 
-// Sample customer information for each order
 const customerInfoByOrderId: Record<string, {name: string, phone: string, address: string}> = {
   'ORD-1001': {
     name: 'Mahesh BM',
@@ -153,10 +150,12 @@ const OrderDetails: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
 
-  // Find the order from the mock data
   const orderDetails = initialUnpaidOrders.find(order => order.id === orderId) || null;
+  const paymentRecord = initialPaymentHistory.find(record => record.orderId === orderId) || null;
 
-  if (!orderDetails) {
+  const orderExists = orderDetails !== null || paymentRecord !== null;
+
+  if (!orderExists) {
     return (
       <AdminLayout>
         <PageHeader 
@@ -181,28 +180,36 @@ const OrderDetails: React.FC = () => {
     );
   }
 
-  // Format date in DD/MM/YYYY format
+  const orderData = orderDetails || {
+    id: paymentRecord?.orderId || '',
+    studioId: paymentRecord?.studioId || 0,
+    studioName: paymentRecord?.studioName || '',
+    date: paymentRecord?.deliveredDate || '',
+    amount: paymentRecord?.amount || 0,
+    isPaid: true,
+    washType: paymentRecord?.washType || 'standard',
+    customerName: paymentRecord?.customerName || '',
+    deliveredDate: paymentRecord?.deliveredDate || '',
+    status: 'completed'
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   };
 
-  // Get clothing items for the current order
   const getClothingItems = () => {
-    return clothingItemsByOrderId[orderDetails.id] || clothingItemsByOrderId['ORD-1001'];
+    return clothingItemsByOrderId[orderData.id] || clothingItemsByOrderId['ORD-1001'];
   };
 
-  // Get delivery info for the current order
   const getDeliveryInfo = () => {
-    return deliveryInfoByOrderId[orderDetails.id] || deliveryInfoByOrderId['ORD-1001'];
+    return deliveryInfoByOrderId[orderData.id] || deliveryInfoByOrderId['ORD-1001'];
   };
 
-  // Get customer info for the current order
   const getCustomerInfo = () => {
-    return customerInfoByOrderId[orderDetails.id] || customerInfoByOrderId['ORD-1001'];
+    return customerInfoByOrderId[orderData.id] || customerInfoByOrderId['ORD-1001'];
   };
 
-  // Get wash type display text
   const getWashTypeText = (washType: string | undefined) => {
     if (washType === 'express') return 'Express Wash';
     if (washType === 'standard') return 'Standard Wash';
@@ -210,17 +217,14 @@ const OrderDetails: React.FC = () => {
     return 'Standard Wash';
   };
 
-  // Fixed per kg rate with different rates for standard and express
   const getPerKgRate = (type: 'standard' | 'express') => {
     return type === 'standard' ? 49 : 69; // Express wash is more expensive
   };
 
-  // Fixed total weight at 2.5 kg as requested
   const getTotalWeight = () => {
     return 2.5;
   };
 
-  // Calculate delivery date based on order date and wash type
   const calculateDeliveryDate = (orderDate: string, washType: 'express' | 'standard' | 'combined' | undefined): string => {
     if (!orderDate) return '';
     
@@ -235,21 +239,27 @@ const OrderDetails: React.FC = () => {
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   };
 
-  // Determine if we need to show both standard and express services
-  const isCombinedWash = orderDetails.washType === 'combined';
-  const showExpressWash = orderDetails.washType === 'express' || isCombinedWash;
-  const showStandardWash = orderDetails.washType === 'standard' || isCombinedWash;
+  const isCombinedWash = orderData.washType === 'combined';
+  const showExpressWash = orderData.washType === 'express' || isCombinedWash;
+  const showStandardWash = orderData.washType === 'standard' || isCombinedWash;
 
-  // Calculate total amounts
   const standardAmount = showStandardWash ? getTotalWeight() * getPerKgRate('standard') : 0;
   const expressAmount = showExpressWash ? getTotalWeight() * getPerKgRate('express') : 0;
   const totalAmount = standardAmount + expressAmount;
 
+  const isPaid = paymentRecord !== null;
+  const paymentInfo = paymentRecord ? {
+    paymentDate: formatDate(paymentRecord.paymentDate),
+    paymentMethod: paymentRecord.paymentMethod,
+    referenceNumber: paymentRecord.referenceNumber,
+    status: paymentRecord.status
+  } : null;
+
   return (
     <AdminLayout>
       <PageHeader 
-        title={`Order Details: ${orderDetails.id}`} 
-        subtitle={`View details for order ${orderDetails.id}`}
+        title={`Order Details: ${orderData.id}`} 
+        subtitle={`View details for order ${orderData.id}`}
         backButton={
           <Button
             variant="back"
@@ -264,7 +274,6 @@ const OrderDetails: React.FC = () => {
 
       <div className="container mx-auto p-6 space-y-6">
         <div className="space-y-6">
-          {/* Order Information Card */}
           <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
             <div className="bg-green-100 py-2 px-4 flex items-center">
               <Info className="h-5 w-5 mr-2 text-green-800" />
@@ -274,25 +283,50 @@ const OrderDetails: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-gray-600">Order ID - </span>
-                  <span className="font-medium">{orderDetails.id}</span>
+                  <span className="font-medium">{orderData.id}</span>
                 </div>
                 <div>
                   <span className="text-gray-600">Ordered Date - </span>
-                  <span className="font-medium">{formatDate(orderDetails.date)}</span>
+                  <span className="font-medium">{formatDate(orderData.date)}</span>
                 </div>
                 <div>
                   <span className="text-gray-600">Order Delivered date - </span>
-                  <span className="font-medium">{calculateDeliveryDate(orderDetails.date, orderDetails.washType)}</span>
+                  <span className="font-medium">{calculateDeliveryDate(orderData.date, orderData.washType as any)}</span>
                 </div>
                 <div>
                   <span className="text-gray-600">Wash Type - </span>
-                  <span className="font-medium text-red-600">{getWashTypeText(orderDetails.washType)}</span>
+                  <span className="font-medium text-red-600">{getWashTypeText(orderData.washType)}</span>
                 </div>
+                {isPaid && paymentInfo && (
+                  <>
+                    <div>
+                      <span className="text-gray-600">Payment Status - </span>
+                      <span className="font-medium text-green-600">Paid</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Payment Date - </span>
+                      <span className="font-medium">{paymentInfo.paymentDate}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Payment Method - </span>
+                      <span className="font-medium">{paymentInfo.paymentMethod}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Reference Number - </span>
+                      <span className="font-medium">{paymentInfo.referenceNumber}</span>
+                    </div>
+                  </>
+                )}
+                {!isPaid && (
+                  <div>
+                    <span className="text-gray-600">Payment Status - </span>
+                    <span className="font-medium text-yellow-600">Unpaid</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
           
-          {/* Customer Information Card */}
           <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
             <div className="bg-green-100 py-2 px-4 flex items-center">
               <User className="h-5 w-5 mr-2 text-green-800" />
@@ -314,7 +348,6 @@ const OrderDetails: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Services Information Card */}
           <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
             <div className="bg-green-100 py-2 px-4 flex items-center">
               <DollarSign className="h-5 w-5 mr-2 text-green-800" />
@@ -323,7 +356,7 @@ const OrderDetails: React.FC = () => {
             <CardContent className="p-4 text-sm">
               <div className="mb-3">
                 <span className="text-gray-600">Wash Type - </span>
-                <span className="font-medium text-red-600">{getWashTypeText(orderDetails.washType)}</span>
+                <span className="font-medium text-red-600">{getWashTypeText(orderData.washType)}</span>
               </div>
               
               {showStandardWash && (
@@ -341,7 +374,6 @@ const OrderDetails: React.FC = () => {
                     <div className="text-right">{formatIndianRupees(getTotalWeight() * getPerKgRate('standard'))}</div>
                   </div>
                   
-                  {/* Clothing items for Standard Wash */}
                   <div className="mb-4">
                     <div className="font-medium mb-2">Clothing Items</div>
                     <div className="flex flex-col gap-1">
@@ -370,7 +402,6 @@ const OrderDetails: React.FC = () => {
                     <div className="text-right">{formatIndianRupees(getTotalWeight() * getPerKgRate('express'))}</div>
                   </div>
                   
-                  {/* Clothing items for Express Wash */}
                   <div className="mb-4">
                     <div className="font-medium mb-2">Clothing Items</div>
                     <div className="flex flex-col gap-1">
@@ -391,7 +422,6 @@ const OrderDetails: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Delivery Information Card */}
           <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
             <div className="bg-green-100 py-2 px-4 flex items-center">
               <Truck className="h-5 w-5 mr-2 text-green-800" />
@@ -405,7 +435,7 @@ const OrderDetails: React.FC = () => {
               <div>
                 <span className="text-gray-600">Delivered date & time - </span>
                 <span className="font-medium">
-                  {calculateDeliveryDate(orderDetails.date, orderDetails.washType)} at {getDeliveryInfo().deliveryTime}
+                  {calculateDeliveryDate(orderData.date, orderData.washType)} at {getDeliveryInfo().deliveryTime}
                 </span>
               </div>
               <div>

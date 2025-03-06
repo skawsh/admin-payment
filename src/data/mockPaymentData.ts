@@ -85,7 +85,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2001', 
       studioId: 1, 
       studioName: 'Saiteja Laundry', 
-      orderId: 'ORD-1000', 
+      orderId: 'ORD-1001', // Changed to match existing order ID
       amount: 520, 
       paymentDate: date, 
       referenceNumber: 'UTR12345678', 
@@ -102,7 +102,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2002', 
       studioId: 2, 
       studioName: 'Sparkle Clean Laundry', 
-      orderId: 'ORD-995', 
+      orderId: 'ORD-1002', // Changed to match existing order ID
       amount: 420, 
       paymentDate: date, 
       referenceNumber: 'UTR87654321', 
@@ -119,7 +119,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2003', 
       studioId: 1, 
       studioName: 'Saiteja Laundry', 
-      orderId: 'ORD-990', 
+      orderId: 'ORD-1003', // Changed to match existing order ID
       amount: 350, 
       paymentDate: date, 
       referenceNumber: 'UTR23456789', 
@@ -136,7 +136,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2004', 
       studioId: 3, 
       studioName: 'Fresh Fold Services', 
-      orderId: 'ORD-985', 
+      orderId: 'ORD-1004', // Changed to match existing order ID
       amount: 600, 
       paymentDate: date, 
       referenceNumber: 'UTR98765432', 
@@ -153,7 +153,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2005', 
       studioId: 4, 
       studioName: 'Royal Wash', 
-      orderId: 'ORD-980', 
+      orderId: 'ORD-1005', // Changed to match existing order ID
       amount: 480, 
       paymentDate: date, 
       referenceNumber: 'UTR34567890', 
@@ -170,7 +170,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2006', 
       studioId: 1, 
       studioName: 'Saiteja Laundry', 
-      orderId: 'ORD-975', 
+      orderId: 'ORD-1006', // Changed to match existing order ID
       amount: 410, 
       paymentDate: date, 
       referenceNumber: 'UTR45678901', 
@@ -187,7 +187,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2007', 
       studioId: 3, 
       studioName: 'Fresh Fold Services', 
-      orderId: 'ORD-970', 
+      orderId: 'ORD-1007', // Changed to match existing order ID
       amount: 580, 
       paymentDate: date, 
       referenceNumber: 'UTR56789012', 
@@ -204,7 +204,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-2008', 
       studioId: 2, 
       studioName: 'Sparkle Clean Laundry', 
-      orderId: 'ORD-965', 
+      orderId: 'ORD-1008', // Changed to match existing order ID
       amount: 490, 
       paymentDate: date, 
       referenceNumber: 'UTR67890123', 
@@ -221,7 +221,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-3001', 
       studioId: 1, 
       studioName: 'Saiteja Laundry', 
-      orderId: 'ORD-3001', 
+      orderId: 'ORD-1009', // Changed to match existing order ID
       amount: 550, 
       paymentDate: date, 
       referenceNumber: 'UTR11223344', 
@@ -238,7 +238,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-3002', 
       studioId: 1, 
       studioName: 'Saiteja Laundry', 
-      orderId: 'ORD-3002', 
+      orderId: 'ORD-1010', // Changed to match existing order ID
       amount: 470, 
       paymentDate: date, 
       referenceNumber: 'UTR22334455', 
@@ -255,7 +255,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-3003', 
       studioId: 1, 
       studioName: 'Saiteja Laundry', 
-      orderId: 'ORD-3003', 
+      orderId: 'ORD-2001', // Changed to match existing order ID
       amount: 510, 
       paymentDate: date, 
       referenceNumber: 'UTR33445566', 
@@ -272,7 +272,7 @@ export const initialPaymentHistory: PaymentRecord[] = [
       id: 'PMT-3004', 
       studioId: 1, 
       studioName: 'Saiteja Laundry', 
-      orderId: 'ORD-3004', 
+      orderId: 'ORD-2002', // Changed to match existing order ID
       amount: 490, 
       paymentDate: date, 
       referenceNumber: 'UTR44556677', 
