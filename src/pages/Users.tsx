@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import PageHeader from '@/components/ui/PageHeader';
@@ -18,7 +19,8 @@ import {
   Smartphone,
   ShoppingBag,
   Map,
-  Clock
+  Clock,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -36,6 +38,8 @@ import { Avatar } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Customer {
   id: string;
@@ -278,6 +282,10 @@ const COLORS = ['#8B5CF6', '#D946EF', '#F97316', '#0EA5E9'];
 
 const UsersPage: React.FC = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filteredData, setFilteredData] = useState<Customer[]>(customersData);
+  const [statusFilter, setStatusFilter] = useState<{active: boolean, inactive: boolean}>({active: true, inactive: true});
+  const [searchQuery, setSearchQuery] = useState('');
   
   const activeCustomers = customersData.filter(customer => customer.status === 'active').length;
   const inactiveCustomers = customersData.filter(customer => customer.status === 'inactive').length;
@@ -287,6 +295,38 @@ const UsersPage: React.FC = () => {
   const selectedCustomer = selectedCustomerId 
     ? customersData.find(c => c.id === selectedCustomerId) 
     : null;
+
+  // Handle filter changes
+  const applyFilters = () => {
+    let filtered = [...customersData];
+    
+    // Apply status filters
+    filtered = filtered.filter(customer => 
+      (statusFilter.active && customer.status === 'active') || 
+      (statusFilter.inactive && customer.status === 'inactive')
+    );
+    
+    // Apply search query if exists
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(customer => 
+        customer.name.toLowerCase().includes(query) || 
+        customer.email.toLowerCase().includes(query)
+      );
+    }
+    
+    setFilteredData(filtered);
+  };
+
+  // Apply filters when filter state changes
+  React.useEffect(() => {
+    applyFilters();
+  }, [statusFilter, searchQuery]);
+
+  // Handle search input
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   const columns = [
     {
@@ -380,10 +420,68 @@ const UsersPage: React.FC = () => {
           title="Customer Management" 
           subtitle="View and manage all platform customers"
         >
-          <Button variant="outline" className="flex items-center gap-2">
-            <Filter className="h-4 w-4" />
-            Filter
-          </Button>
+          <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Filter
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Filter Customers</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Filter customers based on their status
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="active" 
+                        checked={statusFilter.active}
+                        onCheckedChange={(checked) => 
+                          setStatusFilter(prev => ({...prev, active: checked === true}))
+                        }
+                      />
+                      <label
+                        htmlFor="active"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Active
+                      </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="inactive" 
+                        checked={statusFilter.inactive}
+                        onCheckedChange={(checked) => 
+                          setStatusFilter(prev => ({...prev, inactive: checked === true}))
+                        }
+                      />
+                      <label
+                        htmlFor="inactive"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Inactive
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => {
+                    applyFilters();
+                    setFilterOpen(false);
+                  }}
+                >
+                  Apply Filters
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          
           <Button variant="outline" className="flex items-center gap-2">
             <Download className="h-4 w-4" />
             Export
@@ -436,15 +534,18 @@ const UsersPage: React.FC = () => {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={userActivity}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" />
                         <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="active" name="Active Users" fill="#8B5CF6" />
-                        <Bar dataKey="new" name="New Users" fill="#F97316" />
+                        <Tooltip 
+                          formatter={(value: number) => [`${value.toLocaleString()}`, '']}
+                          labelFormatter={(label) => `Day: ${label}`}
+                        />
+                        <Legend verticalAlign="top" height={36} />
+                        <Bar dataKey="active" name="Active Users" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="new" name="New Users" fill="#F97316" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -464,17 +565,19 @@ const UsersPage: React.FC = () => {
                           data={userSegments}
                           cx="50%"
                           cy="50%"
-                          labelLine={false}
+                          labelLine={true}
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                           outerRadius={100}
                           fill="#8B5CF6"
                           dataKey="value"
+                          paddingAngle={2}
                         >
                           {userSegments.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                        <Legend layout="vertical" verticalAlign="middle" align="right" />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -493,13 +596,21 @@ const UsersPage: React.FC = () => {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
                         data={retentionData}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="rate" stroke="#8B5CF6" activeDot={{ r: 8 }} />
+                        <YAxis domain={[80, 100]} tickFormatter={(value) => `${value}%`} />
+                        <Tooltip formatter={(value) => [`${value}%`, 'Retention Rate']} />
+                        <Legend verticalAlign="top" height={36} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="rate" 
+                          stroke="#8B5CF6" 
+                          activeDot={{ r: 8 }} 
+                          strokeWidth={2}
+                          dot={{ r: 4 }}
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -519,17 +630,19 @@ const UsersPage: React.FC = () => {
                           data={deviceDistribution}
                           cx="50%"
                           cy="50%"
-                          labelLine={false}
+                          labelLine={true}
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                           outerRadius={80}
                           fill="#8B5CF6"
                           dataKey="value"
+                          paddingAngle={2}
                         >
                           {deviceDistribution.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                        <Legend layout="vertical" verticalAlign="middle" align="right" />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -541,10 +654,10 @@ const UsersPage: React.FC = () => {
           <TabsContent value="customers">
             <DataTable
               columns={columns}
-              data={customersData}
+              data={filteredData}
               keyField="id"
               searchPlaceholder="Search customers by name or email..."
-              onSearch={() => {}}
+              onSearch={handleSearch}
               searchFields={['name', 'email']}
             />
           </TabsContent>
@@ -588,13 +701,21 @@ const UsersPage: React.FC = () => {
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart
                         data={userSpending}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip formatter={(value) => [`₹${value}`, 'Total Spent']}/>
-                        <Area type="monotone" dataKey="amount" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.3} />
+                        <YAxis tickFormatter={(value) => `₹${(value/1000)}K`} />
+                        <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Total Spent']}/>
+                        <Legend verticalAlign="top" height={36} />
+                        <Area 
+                          type="monotone" 
+                          dataKey="amount" 
+                          stroke="#8B5CF6" 
+                          fill="#8B5CF6" 
+                          fillOpacity={0.3} 
+                          strokeWidth={2}
+                        />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
