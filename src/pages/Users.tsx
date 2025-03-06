@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import PageHeader from '@/components/ui/PageHeader';
@@ -278,7 +277,57 @@ const userSpending: UserSpending[] = [
   { month: 'Jun', amount: 3900000 },
 ];
 
-const COLORS = ['#8B5CF6', '#D946EF', '#F97316', '#0EA5E9'];
+const COLORS = ['#8B5CF6', '#EC4899', '#F97316', '#0EA5E9'];
+
+const CustomPieTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 border border-gray-200 rounded-md shadow-md">
+        <p className="font-semibold">{`${payload[0].name}: ${payload[0].value}%`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name, value }: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius * 1.2;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text 
+      x={x} 
+      y={y} 
+      fill={COLORS[index % COLORS.length]}
+      textAnchor={x > cx ? 'start' : 'end'} 
+      dominantBaseline="central"
+      fontSize={14}
+      fontWeight="bold"
+    >
+      {`${name}: ${value}%`}
+    </text>
+  );
+};
+
+const CustomBarTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 border border-gray-200 rounded-md shadow-md">
+        <p className="font-bold">{`Day: ${label}`}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={`tooltip-${index}`} style={{ color: entry.color }}>
+            {`${entry.name}: ${entry.value.toLocaleString()}`}
+          </p>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+};
 
 const UsersPage: React.FC = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
@@ -296,17 +345,14 @@ const UsersPage: React.FC = () => {
     ? customersData.find(c => c.id === selectedCustomerId) 
     : null;
 
-  // Handle filter changes
   const applyFilters = () => {
     let filtered = [...customersData];
     
-    // Apply status filters
     filtered = filtered.filter(customer => 
       (statusFilter.active && customer.status === 'active') || 
       (statusFilter.inactive && customer.status === 'inactive')
     );
     
-    // Apply search query if exists
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(customer => 
@@ -318,12 +364,10 @@ const UsersPage: React.FC = () => {
     setFilteredData(filtered);
   };
 
-  // Apply filters when filter state changes
   React.useEffect(() => {
     applyFilters();
   }, [statusFilter, searchQuery]);
 
-  // Handle search input
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
@@ -536,16 +580,36 @@ const UsersPage: React.FC = () => {
                         data={userActivity}
                         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
-                        <Tooltip 
-                          formatter={(value: number) => [`${value.toLocaleString()}`, '']}
-                          labelFormatter={(label) => `Day: ${label}`}
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis 
+                          dataKey="date" 
+                          tick={{ fill: '#666', fontSize: 12 }}
+                          axisLine={{ stroke: '#e0e0e0' }}
                         />
-                        <Legend verticalAlign="top" height={36} />
-                        <Bar dataKey="active" name="Active Users" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="new" name="New Users" fill="#F97316" radius={[4, 4, 0, 0]} />
+                        <YAxis 
+                          tick={{ fill: '#666', fontSize: 12 }}
+                          axisLine={{ stroke: '#e0e0e0' }}
+                        />
+                        <Tooltip content={<CustomBarTooltip />} />
+                        <Legend 
+                          verticalAlign="top" 
+                          height={36}
+                          wrapperStyle={{ paddingBottom: 10 }}
+                        />
+                        <Bar 
+                          dataKey="active" 
+                          name="Active Users" 
+                          fill="#8B5CF6" 
+                          radius={[4, 4, 0, 0]} 
+                          barSize={30}
+                        />
+                        <Bar 
+                          dataKey="new" 
+                          name="New Users" 
+                          fill="#F97316" 
+                          radius={[4, 4, 0, 0]} 
+                          barSize={30}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -564,20 +628,29 @@ const UsersPage: React.FC = () => {
                         <Pie
                           data={userSegments}
                           cx="50%"
-                          cy="50%"
-                          labelLine={true}
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          cy="45%"
+                          labelLine={false}
+                          label={renderCustomizedLabel}
                           outerRadius={100}
                           fill="#8B5CF6"
                           dataKey="value"
                           paddingAngle={2}
+                          strokeWidth={2}
+                          stroke="#fff"
                         >
                           {userSegments.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
-                        <Legend layout="vertical" verticalAlign="middle" align="right" />
+                        <Tooltip content={<CustomPieTooltip />} />
+                        <Legend 
+                          layout="horizontal" 
+                          verticalAlign="bottom" 
+                          align="center"
+                          iconType="circle"
+                          iconSize={10}
+                          wrapperStyle={{ paddingTop: 20 }}
+                        />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -598,18 +671,41 @@ const UsersPage: React.FC = () => {
                         data={retentionData}
                         margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis domain={[80, 100]} tickFormatter={(value) => `${value}%`} />
-                        <Tooltip formatter={(value) => [`${value}%`, 'Retention Rate']} />
-                        <Legend verticalAlign="top" height={36} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis 
+                          dataKey="month" 
+                          tick={{ fill: '#666', fontSize: 12 }}
+                          axisLine={{ stroke: '#e0e0e0' }}
+                        />
+                        <YAxis 
+                          domain={[80, 100]} 
+                          tickFormatter={(value) => `${value}%`}
+                          tick={{ fill: '#666', fontSize: 12 }}
+                          axisLine={{ stroke: '#e0e0e0' }}
+                        />
+                        <Tooltip 
+                          formatter={(value) => [`${value}%`, 'Retention Rate']}
+                          contentStyle={{ 
+                            backgroundColor: 'white', 
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '4px',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                          }}
+                        />
+                        <Legend 
+                          verticalAlign="top" 
+                          height={36}
+                          iconType="circle"
+                          iconSize={10}
+                        />
                         <Line 
                           type="monotone" 
                           dataKey="rate" 
+                          name="Retention Rate"
                           stroke="#8B5CF6" 
-                          activeDot={{ r: 8 }} 
-                          strokeWidth={2}
-                          dot={{ r: 4 }}
+                          strokeWidth={3}
+                          activeDot={{ r: 8, fill: '#8B5CF6', stroke: 'white', strokeWidth: 2 }} 
+                          dot={{ r: 4, fill: '#8B5CF6', stroke: 'white', strokeWidth: 2 }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -629,20 +725,29 @@ const UsersPage: React.FC = () => {
                         <Pie
                           data={deviceDistribution}
                           cx="50%"
-                          cy="50%"
-                          labelLine={true}
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          cy="45%"
+                          labelLine={false}
+                          label={renderCustomizedLabel}
                           outerRadius={80}
                           fill="#8B5CF6"
                           dataKey="value"
                           paddingAngle={2}
+                          strokeWidth={2}
+                          stroke="#fff"
                         >
                           {deviceDistribution.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
-                        <Legend layout="vertical" verticalAlign="middle" align="right" />
+                        <Tooltip content={<CustomPieTooltip />} />
+                        <Legend 
+                          layout="horizontal" 
+                          verticalAlign="bottom" 
+                          align="center"
+                          iconType="circle"
+                          iconSize={10}
+                          wrapperStyle={{ paddingTop: 20 }}
+                        />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -703,14 +808,35 @@ const UsersPage: React.FC = () => {
                         data={userSpending}
                         margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis tickFormatter={(value) => `₹${(value/1000)}K`} />
-                        <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Total Spent']}/>
-                        <Legend verticalAlign="top" height={36} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis 
+                          dataKey="month" 
+                          tick={{ fill: '#666', fontSize: 12 }}
+                          axisLine={{ stroke: '#e0e0e0' }}
+                        />
+                        <YAxis 
+                          tickFormatter={(value) => `₹${(value/1000)}K`}
+                          tick={{ fill: '#666', fontSize: 12 }}
+                          axisLine={{ stroke: '#e0e0e0' }}
+                        />
+                        <Tooltip 
+                          formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Total Spent']}
+                          contentStyle={{ 
+                            backgroundColor: 'white', 
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '4px',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                          }}
+                        />
+                        <Legend 
+                          verticalAlign="top" 
+                          height={36}
+                          iconType="circle"
+                        />
                         <Area 
                           type="monotone" 
                           dataKey="amount" 
+                          name="Total Revenue"
                           stroke="#8B5CF6" 
                           fill="#8B5CF6" 
                           fillOpacity={0.3} 
