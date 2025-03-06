@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { UnpaidOrder, PaymentRecord } from '@/types/paymentTypes';
@@ -106,10 +107,20 @@ const PaymentTabs: React.FC<PaymentTabsProps> = ({
   ];
 
   return (
-    <Tabs defaultValue="unpaid" className="w-full" onValueChange={(value) => setViewType(value as 'unpaid' | 'history')}>
+    <Tabs defaultValue="unpaid" value={viewType} className="w-full" onValueChange={(value) => setViewType(value as 'unpaid' | 'history')}>
       <TabsList className="mb-6 bg-background border border-input">
-        <TabsTrigger value="unpaid" className="flex-1">Unpaid Payments</TabsTrigger>
-        <TabsTrigger value="history" className="flex-1">Payment History</TabsTrigger>
+        <TabsTrigger 
+          value="unpaid" 
+          className="flex-1 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+        >
+          Unpaid Payments
+        </TabsTrigger>
+        <TabsTrigger 
+          value="history" 
+          className="flex-1 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+        >
+          Payment History
+        </TabsTrigger>
       </TabsList>
       
       <TabsContent value="unpaid">
