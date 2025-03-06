@@ -8,6 +8,7 @@ import { ArrowLeft, Info, Truck, User, DollarSign } from "lucide-react";
 import { formatIndianRupees } from '@/utils/dateUtils';
 import { initialUnpaidOrders, initialPaymentHistory } from '@/data/mockPaymentData';
 import { UnpaidOrder, PaymentRecord } from '@/types/paymentTypes';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const clothingItemsByOrderId: Record<string, {
   standard: {name: string, quantity: number}[],
@@ -272,180 +273,182 @@ const OrderDetails: React.FC = () => {
         }
       />
 
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="space-y-6">
-          <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
-            <div className="bg-green-100 py-2 px-4 flex items-center">
-              <Info className="h-5 w-5 mr-2 text-green-800" />
-              <h3 className="text-md font-medium text-green-800">Order Information</h3>
-            </div>
-            <CardContent className="p-4 text-sm space-y-2">
-              <div className="grid grid-cols-2 gap-4">
+      <ScrollArea className="h-[calc(100vh-120px)]">
+        <div className="container mx-auto p-6 space-y-6">
+          <div className="space-y-6">
+            <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
+              <div className="bg-green-100 py-2 px-4 flex items-center">
+                <Info className="h-5 w-5 mr-2 text-green-800" />
+                <h3 className="text-md font-medium text-green-800">Order Information</h3>
+              </div>
+              <CardContent className="p-4 text-sm space-y-2">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-gray-600">Order ID - </span>
+                    <span className="font-medium">{orderData.id}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Ordered Date - </span>
+                    <span className="font-medium">{formatDate(orderData.date)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Order Delivered date - </span>
+                    <span className="font-medium">{calculateDeliveryDate(orderData.date, orderData.washType as any)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Wash Type - </span>
+                    <span className="font-medium text-red-600">{getWashTypeText(orderData.washType)}</span>
+                  </div>
+                  {isPaid && paymentInfo && (
+                    <>
+                      <div>
+                        <span className="text-gray-600">Payment Status - </span>
+                        <span className="font-medium text-green-600">Paid</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Payment Date - </span>
+                        <span className="font-medium">{paymentInfo.paymentDate}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Payment Method - </span>
+                        <span className="font-medium">{paymentInfo.paymentMethod}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Reference Number - </span>
+                        <span className="font-medium">{paymentInfo.referenceNumber}</span>
+                      </div>
+                    </>
+                  )}
+                  {!isPaid && (
+                    <div>
+                      <span className="text-gray-600">Payment Status - </span>
+                      <span className="font-medium text-yellow-600">Unpaid</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
+              <div className="bg-green-100 py-2 px-4 flex items-center">
+                <User className="h-5 w-5 mr-2 text-green-800" />
+                <h3 className="text-md font-medium text-green-800">Customer Information</h3>
+              </div>
+              <CardContent className="p-4 text-sm space-y-2">
                 <div>
-                  <span className="text-gray-600">Order ID - </span>
-                  <span className="font-medium">{orderData.id}</span>
+                  <span className="text-gray-600">Customer Name - </span>
+                  <span className="font-medium">{getCustomerInfo().name}</span>
                 </div>
                 <div>
-                  <span className="text-gray-600">Ordered Date - </span>
-                  <span className="font-medium">{formatDate(orderData.date)}</span>
+                  <span className="text-gray-600">Number - </span>
+                  <span className="font-medium">{getCustomerInfo().phone}</span>
                 </div>
                 <div>
-                  <span className="text-gray-600">Order Delivered date - </span>
-                  <span className="font-medium">{calculateDeliveryDate(orderData.date, orderData.washType as any)}</span>
+                  <span className="text-gray-600">Address - </span>
+                  <span className="font-medium">{getCustomerInfo().address}</span>
                 </div>
-                <div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
+              <div className="bg-green-100 py-2 px-4 flex items-center">
+                <DollarSign className="h-5 w-5 mr-2 text-green-800" />
+                <h3 className="text-md font-medium text-green-800">Services Information</h3>
+              </div>
+              <CardContent className="p-4 text-sm">
+                <div className="mb-3">
                   <span className="text-gray-600">Wash Type - </span>
                   <span className="font-medium text-red-600">{getWashTypeText(orderData.washType)}</span>
                 </div>
-                {isPaid && paymentInfo && (
-                  <>
-                    <div>
-                      <span className="text-gray-600">Payment Status - </span>
-                      <span className="font-medium text-green-600">Paid</span>
+                
+                {showStandardWash && (
+                  <div className="border-b border-gray-200 mb-3">
+                    <div className="font-medium mb-2 text-blue-700">Standard Wash</div>
+                    <div className="grid grid-cols-3 gap-1 font-medium mb-2">
+                      <div>Services</div>
+                      <div>Quantity</div>
+                      <div className="text-right">Price</div>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Payment Date - </span>
-                      <span className="font-medium">{paymentInfo.paymentDate}</span>
+                    
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      <div>1. Wash & Fold</div>
+                      <div>{getTotalWeight()} X {getPerKgRate('standard')}/kg</div>
+                      <div className="text-right">{formatIndianRupees(getTotalWeight() * getPerKgRate('standard'))}</div>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Payment Method - </span>
-                      <span className="font-medium">{paymentInfo.paymentMethod}</span>
+                    
+                    <div className="mb-4">
+                      <div className="font-medium mb-2">Clothing Items</div>
+                      <div className="flex flex-col gap-1">
+                        {getClothingItems().standard.map((item, index) => (
+                          <div key={index} className="ml-2">
+                            {index + 1}. {item.name} ({item.quantity})
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Reference Number - </span>
-                      <span className="font-medium">{paymentInfo.referenceNumber}</span>
-                    </div>
-                  </>
+                  </div>
                 )}
-                {!isPaid && (
-                  <div>
-                    <span className="text-gray-600">Payment Status - </span>
-                    <span className="font-medium text-yellow-600">Unpaid</span>
+                
+                {showExpressWash && (
+                  <div className="border-b border-gray-200 mb-3">
+                    <div className="font-medium mb-2 text-purple-700">Express Wash</div>
+                    <div className="grid grid-cols-3 gap-1 font-medium mb-2">
+                      <div>Services</div>
+                      <div>Quantity</div>
+                      <div className="text-right">Price</div>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      <div>1. Express Wash & Fold</div>
+                      <div>{getTotalWeight()} X {getPerKgRate('express')}/kg</div>
+                      <div className="text-right">{formatIndianRupees(getTotalWeight() * getPerKgRate('express'))}</div>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <div className="font-medium mb-2">Clothing Items</div>
+                      <div className="flex flex-col gap-1">
+                        {getClothingItems().express.map((item, index) => (
+                          <div key={index} className="ml-2">
+                            {index + 1}. {item.name} ({item.quantity})
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
-            <div className="bg-green-100 py-2 px-4 flex items-center">
-              <User className="h-5 w-5 mr-2 text-green-800" />
-              <h3 className="text-md font-medium text-green-800">Customer Information</h3>
-            </div>
-            <CardContent className="p-4 text-sm space-y-2">
-              <div>
-                <span className="text-gray-600">Customer Name - </span>
-                <span className="font-medium">{getCustomerInfo().name}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">Number - </span>
-                <span className="font-medium">{getCustomerInfo().phone}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">Address - </span>
-                <span className="font-medium">{getCustomerInfo().address}</span>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
-            <div className="bg-green-100 py-2 px-4 flex items-center">
-              <DollarSign className="h-5 w-5 mr-2 text-green-800" />
-              <h3 className="text-md font-medium text-green-800">Services Information</h3>
-            </div>
-            <CardContent className="p-4 text-sm">
-              <div className="mb-3">
-                <span className="text-gray-600">Wash Type - </span>
-                <span className="font-medium text-red-600">{getWashTypeText(orderData.washType)}</span>
-              </div>
-              
-              {showStandardWash && (
-                <div className="border-b border-gray-200 mb-3">
-                  <div className="font-medium mb-2 text-blue-700">Standard Wash</div>
-                  <div className="grid grid-cols-3 gap-1 font-medium mb-2">
-                    <div>Services</div>
-                    <div>Quantity</div>
-                    <div className="text-right">Price</div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-1 mb-2">
-                    <div>1. Wash & Fold</div>
-                    <div>{getTotalWeight()} X {getPerKgRate('standard')}/kg</div>
-                    <div className="text-right">{formatIndianRupees(getTotalWeight() * getPerKgRate('standard'))}</div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <div className="font-medium mb-2">Clothing Items</div>
-                    <div className="flex flex-col gap-1">
-                      {getClothingItems().standard.map((item, index) => (
-                        <div key={index} className="ml-2">
-                          {index + 1}. {item.name} ({item.quantity})
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                
+                <div className="flex justify-between font-medium border-t border-gray-200 pt-3 text-base">
+                  <div>Total</div>
+                  <div>{formatIndianRupees(totalAmount)}</div>
                 </div>
-              )}
-              
-              {showExpressWash && (
-                <div className="border-b border-gray-200 mb-3">
-                  <div className="font-medium mb-2 text-purple-700">Express Wash</div>
-                  <div className="grid grid-cols-3 gap-1 font-medium mb-2">
-                    <div>Services</div>
-                    <div>Quantity</div>
-                    <div className="text-right">Price</div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-1 mb-2">
-                    <div>1. Express Wash & Fold</div>
-                    <div>{getTotalWeight()} X {getPerKgRate('express')}/kg</div>
-                    <div className="text-right">{formatIndianRupees(getTotalWeight() * getPerKgRate('express'))}</div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <div className="font-medium mb-2">Clothing Items</div>
-                    <div className="flex flex-col gap-1">
-                      {getClothingItems().express.map((item, index) => (
-                        <div key={index} className="ml-2">
-                          {index + 1}. {item.name} ({item.quantity})
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
+              <div className="bg-green-100 py-2 px-4 flex items-center">
+                <Truck className="h-5 w-5 mr-2 text-green-800" />
+                <h3 className="text-md font-medium text-green-800">Delivery Information</h3>
+              </div>
+              <CardContent className="p-4 text-sm space-y-2">
+                <div>
+                  <span className="text-gray-600">Assigned to - </span>
+                  <span className="font-medium">{getDeliveryInfo().assignedTo} / {getDeliveryInfo().phoneNumber}</span>
                 </div>
-              )}
-              
-              <div className="flex justify-between font-medium border-t border-gray-200 pt-3 text-base">
-                <div>Total</div>
-                <div>{formatIndianRupees(totalAmount)}</div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-green-100 rounded-xl overflow-hidden shadow-sm">
-            <div className="bg-green-100 py-2 px-4 flex items-center">
-              <Truck className="h-5 w-5 mr-2 text-green-800" />
-              <h3 className="text-md font-medium text-green-800">Delivery Information</h3>
-            </div>
-            <CardContent className="p-4 text-sm space-y-2">
-              <div>
-                <span className="text-gray-600">Assigned to - </span>
-                <span className="font-medium">{getDeliveryInfo().assignedTo} / {getDeliveryInfo().phoneNumber}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">Delivered date & time - </span>
-                <span className="font-medium">
-                  {calculateDeliveryDate(orderData.date, orderData.washType)} at {getDeliveryInfo().deliveryTime}
-                </span>
-              </div>
-              <div>
-                <span className="text-gray-600">Vehicle details - </span>
-                <span className="font-medium">{getDeliveryInfo().vehicleDetails}</span>
-              </div>
-            </CardContent>
-          </Card>
+                <div>
+                  <span className="text-gray-600">Delivered date & time - </span>
+                  <span className="font-medium">
+                    {calculateDeliveryDate(orderData.date, orderData.washType)} at {getDeliveryInfo().deliveryTime}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Vehicle details - </span>
+                  <span className="font-medium">{getDeliveryInfo().vehicleDetails}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      </ScrollArea>
     </AdminLayout>
   );
 };
