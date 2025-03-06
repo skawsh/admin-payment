@@ -752,7 +752,7 @@ const Studios: React.FC = () => {
             
             {showRatingFilter && (
               <div className="absolute left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10 min-w-[120px]">
-                {[null, 5, 4, 3, 2, 1].map((rating) => (
+                {[null, 4, 3, 2, 1].map((rating) => (
                   <button
                     key={rating === null ? 'all' : rating}
                     className={`block w-full text-left px-4 py-2 text-sm ${
