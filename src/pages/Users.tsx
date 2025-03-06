@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import PageHeader from '@/components/ui/PageHeader';
@@ -92,7 +91,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-15T09:32:45',
     status: 'active',
     ordersCount: 12,
-    totalSpent: 547.80,
+    totalSpent: 41085.00,
     primaryDevice: 'iOS',
     preferredPaymentMethod: 'Credit Card',
     lastOrderDate: '2023-05-10'
@@ -107,7 +106,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-15T10:45:12',
     status: 'active',
     ordersCount: 28,
-    totalSpent: 1206.35,
+    totalSpent: 90476.25,
     primaryDevice: 'Android',
     preferredPaymentMethod: 'PayPal',
     lastOrderDate: '2023-05-14'
@@ -122,7 +121,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-10T14:22:33',
     status: 'inactive',
     ordersCount: 6,
-    totalSpent: 287.92,
+    totalSpent: 21594.00,
     primaryDevice: 'iOS',
     preferredPaymentMethod: 'Credit Card',
     lastOrderDate: '2023-04-22'
@@ -137,7 +136,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-15T08:17:55',
     status: 'active',
     ordersCount: 17,
-    totalSpent: 789.45,
+    totalSpent: 59208.75,
     primaryDevice: 'Android',
     preferredPaymentMethod: 'Credit Card',
     lastOrderDate: '2023-05-15'
@@ -152,7 +151,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-01T16:42:18',
     status: 'inactive',
     ordersCount: 34,
-    totalSpent: 1678.10,
+    totalSpent: 125857.50,
     primaryDevice: 'iOS',
     preferredPaymentMethod: 'PayPal',
     lastOrderDate: '2023-04-25'
@@ -167,7 +166,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-15T11:23:41',
     status: 'active',
     ordersCount: 42,
-    totalSpent: 2143.67,
+    totalSpent: 160775.25,
     primaryDevice: 'iOS',
     preferredPaymentMethod: 'Apple Pay',
     lastOrderDate: '2023-05-12'
@@ -182,7 +181,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-14T19:51:27',
     status: 'active',
     ordersCount: 9,
-    totalSpent: 412.35,
+    totalSpent: 30926.25,
     primaryDevice: 'Android',
     preferredPaymentMethod: 'Credit Card',
     lastOrderDate: '2023-05-13'
@@ -197,7 +196,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-15T13:35:09',
     status: 'active',
     ordersCount: 15,
-    totalSpent: 678.90,
+    totalSpent: 50917.50,
     primaryDevice: 'iOS',
     preferredPaymentMethod: 'Credit Card',
     lastOrderDate: '2023-05-11'
@@ -212,7 +211,7 @@ const customersData: Customer[] = [
     lastActive: '2023-05-08T10:11:22',
     status: 'active',
     ordersCount: 2,
-    totalSpent: 98.45,
+    totalSpent: 7383.75,
     primaryDevice: 'Android',
     preferredPaymentMethod: 'Google Pay',
     lastOrderDate: '2023-05-08'
@@ -227,7 +226,7 @@ const customersData: Customer[] = [
     lastActive: '2023-04-25T17:28:44',
     status: 'inactive',
     ordersCount: 7,
-    totalSpent: 345.60,
+    totalSpent: 25920.00,
     primaryDevice: 'iOS',
     preferredPaymentMethod: 'Credit Card',
     lastOrderDate: '2023-04-20'
@@ -267,19 +266,18 @@ const retentionData: RetentionData[] = [
 ];
 
 const userSpending: UserSpending[] = [
-  { month: 'Jan', amount: 34500 },
-  { month: 'Feb', amount: 42300 },
-  { month: 'Mar', amount: 45100 },
-  { month: 'Apr', amount: 39800 },
-  { month: 'May', amount: 47600 },
-  { month: 'Jun', amount: 52000 },
+  { month: 'Jan', amount: 2587500 },
+  { month: 'Feb', amount: 3172500 },
+  { month: 'Mar', amount: 3382500 },
+  { month: 'Apr', amount: 2985000 },
+  { month: 'May', amount: 3570000 },
+  { month: 'Jun', amount: 3900000 },
 ];
 
 const COLORS = ['#8B5CF6', '#D946EF', '#F97316', '#0EA5E9'];
 
 const UsersPage: React.FC = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
-  const [isNewCustomerDialogOpen, setIsNewCustomerDialogOpen] = useState(false);
   
   const activeCustomers = customersData.filter(customer => customer.status === 'active').length;
   const inactiveCustomers = customersData.filter(customer => customer.status === 'inactive').length;
@@ -328,7 +326,7 @@ const UsersPage: React.FC = () => {
     },
     {
       header: "Total Spent",
-      accessor: (row: Customer) => `$${row.totalSpent.toFixed(2)}`,
+      accessor: (row: Customer) => `₹${row.totalSpent.toFixed(2)}`,
     },
     {
       header: "Last Active",
@@ -390,10 +388,6 @@ const UsersPage: React.FC = () => {
             <Download className="h-4 w-4" />
             Export
           </Button>
-          <Button className="flex items-center gap-2" onClick={() => setIsNewCustomerDialogOpen(true)}>
-            <UserPlus className="h-4 w-4" />
-            Add Customer
-          </Button>
         </PageHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -417,7 +411,7 @@ const UsersPage: React.FC = () => {
           />
           <StatsCard
             title="Average Order Value"
-            value={`$${averageOrderValue.toFixed(2)}`}
+            value={`₹${averageOrderValue.toFixed(2)}`}
             icon={<ShoppingBag className="h-5 w-5" />}
             change={{ value: "+5.2%", trend: "up" }}
           />
@@ -559,7 +553,7 @@ const UsersPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <StatsCard
                 title="Lifetime Customer Value"
-                value="$892.45"
+                value="₹66,933.75"
                 icon={<UsersIcon className="h-5 w-5" />}
                 change={{ value: "+7.2%", trend: "up" }}
               />
@@ -599,7 +593,7 @@ const UsersPage: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
-                        <Tooltip formatter={(value) => [`$${value}`, 'Total Spent']} />
+                        <Tooltip formatter={(value) => [`₹${value}`, 'Total Spent']}/>
                         <Area type="monotone" dataKey="amount" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.3} />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -723,7 +717,6 @@ const UsersPage: React.FC = () => {
         </Tabs>
       </div>
 
-      {/* Customer Details Dialog */}
       <Dialog open={!!selectedCustomerId} onOpenChange={() => setSelectedCustomerId(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -783,7 +776,7 @@ const UsersPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Total Spent</p>
-                  <p className="text-sm">${selectedCustomer.totalSpent.toFixed(2)}</p>
+                  <p className="text-sm">₹{selectedCustomer.totalSpent.toFixed(2)}</p>
                 </div>
                 {selectedCustomer.lastOrderDate && (
                   <div>
@@ -811,73 +804,6 @@ const UsersPage: React.FC = () => {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
-
-      {/* New Customer Dialog */}
-      <Dialog open={isNewCustomerDialogOpen} onOpenChange={setIsNewCustomerDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add New Customer</DialogTitle>
-            <DialogDescription>
-              Create a new customer account
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" placeholder="Enter full name" />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input id="email" placeholder="Enter email address" type="email" />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" placeholder="+1 (555) 123-4567" />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="location">Location</Label>
-                <Input id="location" placeholder="City, Country" />
-              </div>
-              <div>
-                <Label htmlFor="device">Primary Device</Label>
-                <select 
-                  id="device" 
-                  className="w-full h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="">Select device</option>
-                  <option value="iOS">iOS</option>
-                  <option value="Android">Android</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="payment">Preferred Payment</Label>
-                <select 
-                  id="payment" 
-                  className="w-full h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="">Select payment method</option>
-                  <option value="Credit Card">Credit Card</option>
-                  <option value="PayPal">PayPal</option>
-                  <option value="Apple Pay">Apple Pay</option>
-                  <option value="Google Pay">Google Pay</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsNewCustomerDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsNewCustomerDialogOpen(false)}>
-              Create Customer
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </AdminLayout>
