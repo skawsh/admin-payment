@@ -99,8 +99,8 @@ const StudioPayments: React.FC = () => {
     setShowPaymentModal(true);
   };
 
-  const navigateToOrderDetails = (order: UnpaidOrder) => {
-    navigate(`/order-details/${order.id}`);
+  const navigateToOrderDetails = (orderId: string) => {
+    navigate(`/order-details/${orderId}`);
   };
 
   const confirmPayment = () => {
@@ -239,7 +239,7 @@ const StudioPayments: React.FC = () => {
       accessor: (row: UnpaidOrder) => (
         <div className="flex gap-2">
           <Button
-            onClick={() => navigateToOrderDetails(row)}
+            onClick={() => navigateToOrderDetails(row.id)}
             variant="outline"
             size="sm"
             className="flex items-center"
@@ -299,6 +299,20 @@ const StudioPayments: React.FC = () => {
     {
       header: 'Reference No.',
       accessor: 'referenceNumber' as keyof PaymentRecord,
+    },
+    {
+      header: 'Order Details',
+      accessor: (row: PaymentRecord) => (
+        <Button
+          onClick={() => navigateToOrderDetails(row.orderId)}
+          variant="outline"
+          size="sm"
+          className="flex items-center"
+        >
+          <InfoIcon className="h-4 w-4 mr-1" />
+          <span>View Details</span>
+        </Button>
+      ),
     }
   ];
 
