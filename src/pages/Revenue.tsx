@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout';
 import PageHeader from '@/components/ui/PageHeader';
@@ -194,7 +193,7 @@ const Revenue: React.FC = () => {
     },
     {
       header: "Amount",
-      accessor: (row: RevenueTransaction) => `$${row.amount.toFixed(2)}`,
+      accessor: (row: RevenueTransaction) => formatIndianRupees(row.amount * 83),
     },
     {
       header: "Source",
@@ -240,24 +239,24 @@ const Revenue: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Revenue (This Month)"
-            value={`$${totalRevenue.toFixed(2)}`}
+            value={formatIndianRupees(totalRevenue * 83)}
             icon={<DollarSign className="h-5 w-5" />}
             change={{ value: "+12.5%", trend: "up" }}
           />
           <StatsCard
             title="Year-to-Date Revenue"
-            value="$293,425.50"
+            value={formatIndianRupees(293425.50 * 83)}
             icon={<TrendingUp className="h-5 w-5" />}
             change={{ value: "+8.2%", trend: "up" }}
           />
           <StatsCard
             title="Pending Revenue"
-            value={`$${pendingRevenue.toFixed(2)}`}
+            value={formatIndianRupees(pendingRevenue * 83)}
             icon={<ShoppingBag className="h-5 w-5" />}
           />
           <StatsCard
             title="Avg. Order Commission"
-            value={`$${avgOrderCommission.toFixed(2)}`}
+            value={formatIndianRupees(avgOrderCommission * 83)}
             icon={<Activity className="h-5 w-5" />}
             change={{ value: "+3.7%", trend: "up" }}
           />
@@ -428,7 +427,7 @@ const Revenue: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Amount</p>
-                  <p className="text-sm font-semibold">${selectedTransaction.amount.toFixed(2)}</p>
+                  <p className="text-sm font-semibold">{formatIndianRupees(selectedTransaction.amount * 83)}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Source</p>
